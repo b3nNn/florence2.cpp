@@ -1,3 +1,5 @@
 transformers>=4.49.0
 pillow
 numpy
+gguf
+torch

@@ -13,7 +13,7 @@ set(RUST_LIB_NAME "hf_tokenizers_c") # Name of the Rust library without prefix/s
 #include_directories(.)
 include_directories(./hf_tokenizer)
 set(RUST_LIB_DIR "${CMAKE_SOURCE_DIR}/target/release")
-add_executable(bart-cpp test_clip.cpp bart_tokenizer_fast.hpp bart_tokenizer_fast.cpp hf_tokenizer/hf_tokenizers.cpp clip_image_processor.hpp clip_image_processor.cpp)
+add_executable(bart-cpp test_florence2.cpp bart_tokenizer_fast.cpp hf_tokenizer/hf_tokenizers.cpp clip_image_processor.cpp florence2_processor.cpp)
 set_property(TARGET bart-cpp PROPERTY CXX_STANDARD 17)
 
 ## On Windows, link against additional system libraries required by Rust
