@@ -2,35 +2,32 @@
 #define CLIP_IMAGE_PROCESSOR_HPP
 
 #include <opencv2/opencv.hpp>
+#include <torch/script.h>
+#include <string>
 #include <vector>
 
 class CLIPImageProcessor {
 public:
-    struct Size {
-        int height, width;
-    };
+    // Constructor takes only the config path
+    CLIPImageProcessor(const std::string& config_path);
 
-    CLIPImageProcessor(bool do_resize, Size size, int interpolation,
-                       bool do_center_crop, Size crop_size,
-                       bool do_normalize, double scale,
-                       bool do_convert_rgb, std::vector<double> mean, std::vector<double> std);
-
-    cv::Mat preprocess(const cv::Mat& image);  // Made public
-    std::vector<cv::Mat> preprocess(const std::vector<cv::Mat>& images);  // New overload
+    // Preprocess an image and return a tensor
+    torch::Tensor Preprocess(const cv::Mat& image);
 
 private:
-    bool do_resize_;
-    Size size_;
-    int interpolation_;
-    bool do_center_crop_;
-    Size crop_size_;
-    bool do_normalize_;
-    double scale_;
-    bool do_convert_rgb_;
-    std::vector<double> mean_;
-    std::vector<double> std_;
+    // Configuration variables (populated from JSON config)
+    bool do_resize;
+    bool do_normalize;
+    int size;
+    std::vector<float> mean;
+    std::vector<float> std;
+    bool swapRB;
+    std::string name;
+    bool do_center_crop;
+    int crop_size;
 
-    // Private helper methods (if any) remain private
+    // Helper method to load configuration from JSON file
+    void load_config(const std::string& config_path);
 };
 
-#endif
+#endif // CLIP_IMAGE_PROCESSOR_HPP

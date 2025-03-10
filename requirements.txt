@@ -5,3 +5,5 @@ gguf
 torch
 timm
 einops
+onnx
+onnxruntime

@@ -20,3 +20,8 @@ CMakeUserPresets.json
 
 /florence2
 /**/*.gguf
+
+# onnx
+/model.*
+onnx__*
+*.onnx
