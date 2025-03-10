@@ -3,52 +3,34 @@
 
 #include <opencv2/opencv.hpp>
 #include <vector>
-#include <string>
 
 class CLIPImageProcessor {
 public:
     struct Size {
-        int height;
-        int width;
+        int height, width;
     };
 
-    struct ProcessedOutput {
-        cv::Mat pixel_values; // Shape: [batch_size, channels, height, width]
-    };
+    CLIPImageProcessor(bool do_resize, Size size, int interpolation,
+                       bool do_center_crop, Size crop_size,
+                       bool do_normalize, double scale,
+                       bool do_convert_rgb, std::vector<double> mean, std::vector<double> std);
 
-    CLIPImageProcessor(
-            bool do_resize = true,
-            Size size = {336, 336}, // Update default to 336x336 for Florence-2
-            int resample = cv::INTER_LINEAR,
-            bool do_center_crop = true,
-            Size crop_size = {336, 336}, // Update default to 336x336
-            bool do_rescale = true,
-            double rescale_factor = 1.0 / 255.0,
-            bool do_normalize = true,
-            std::vector<double> image_mean = {0.48145466, 0.4578275, 0.40821073},
-            std::vector<double> image_std = {0.26862954, 0.26130258, 0.27577711}
-    );
-
-    ProcessedOutput operator()(const cv::Mat& image);
-    ProcessedOutput operator()(const std::vector<cv::Mat>& images);
+    cv::Mat preprocess(const cv::Mat& image);  // Made public
+    std::vector<cv::Mat> preprocess(const std::vector<cv::Mat>& images);  // New overload
 
 private:
     bool do_resize_;
     Size size_;
-    int resample_;
+    int interpolation_;
     bool do_center_crop_;
     Size crop_size_;
-    bool do_rescale_;
-    double rescale_factor_;
     bool do_normalize_;
-    std::vector<double> image_mean_;
-    std::vector<double> image_std_;
+    double scale_;
+    bool do_convert_rgb_;
+    std::vector<double> mean_;
+    std::vector<double> std_;
 
-    cv::Mat preprocess(const cv::Mat& image);
-    cv::Mat resize(const cv::Mat& image);
-    cv::Mat center_crop(const cv::Mat& image);
-    cv::Mat rescale(const cv::Mat& image);
-    cv::Mat normalize(const cv::Mat& image);
+    // Private helper methods (if any) remain private
 };
 
-#endif // CLIP_IMAGE_PROCESSOR_HPP
+#endif

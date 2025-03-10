@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <sstream>
 #include <stdexcept>
+#include "tokenizers.h"
 
 BartTokenizerFast::BartTokenizerFast(const std::string& config_path)
         : tokenizer_(config_path) {

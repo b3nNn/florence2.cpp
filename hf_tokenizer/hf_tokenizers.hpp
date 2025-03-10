@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 #include <optional>
-#include "tokenizers.h"
 
 // Forward declaration of C bindings (assumed to be provided by the tokenizers library)
 struct CTokenizer;

@@ -3,3 +3,5 @@ pillow
 numpy
 gguf
 torch
+timm
+einops

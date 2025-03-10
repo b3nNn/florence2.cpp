@@ -1,6 +1,7 @@
 #include "hf_tokenizers.hpp"
 #include <stdexcept>
 #include <cstring>
+#include "../tokenizers.h"
 
 Tokenizer::Tokenizer(const std::string& file_path) {
     tokenizer_ = tokenizer_from_file(file_path.c_str());

@@ -18,6 +18,5 @@ CMakeUserPresets.json
 /target/**/*
 /build
 
-/llama.cpp
 /florence2
 /**/*.gguf
