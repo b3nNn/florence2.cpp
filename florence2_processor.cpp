@@ -27,11 +27,11 @@ namespace Florence2Processor {
         session = Ort::Session(env, w_model_path.c_str(), session_options);
     }
 
-    std::vector<float> Florence2Processor::process(const std::string& text, const cv::Mat& image) {
+    // Updated process to take decoder_input_ids
+    std::vector<float> Florence2Processor::process(const std::string& text, const cv::Mat& image, const std::vector<int64_t>& decoder_input_ids) {
         std::vector<uint32_t> token_ids = tokenizer.encode(text, true, 256, true, true, "longest");
         std::vector<int64_t> input_ids(token_ids.begin(), token_ids.end());
         input_ids.resize(256, 0);
-        std::vector<int64_t> decoder_input_ids(256, 0);
 
         torch::Tensor image_tensor = image_processor.Preprocess(image);
         std::cout << "Image tensor shape: " << image_tensor.sizes() << std::endl;
@@ -49,8 +49,12 @@ namespace Florence2Processor {
         std::vector<int64_t> input_shape = {1, 256};
         inputs.emplace_back(Ort::Value::CreateTensor<int64_t>(
                 memory_info, input_ids.data(), input_ids.size(), input_shape.data(), input_shape.size()));
+
+        // Ensure decoder_input_ids is padded to 256
+        std::vector<int64_t> padded_decoder_input_ids = decoder_input_ids;
+        padded_decoder_input_ids.resize(256, 0);
         inputs.emplace_back(Ort::Value::CreateTensor<int64_t>(
-                memory_info, decoder_input_ids.data(), decoder_input_ids.size(), input_shape.data(), input_shape.size()));
+                memory_info, padded_decoder_input_ids.data(), padded_decoder_input_ids.size(), input_shape.data(), input_shape.size()));
 
         const char* input_names[] = {"pixel_values", "input_ids", "decoder_input_ids"};
         const char* output_names[] = {"logits"};
@@ -68,21 +72,34 @@ namespace Florence2Processor {
     }
 
     std::string Florence2Processor::generate(const std::string& text, const cv::Mat& image, int max_length) {
-        std::vector<float> logits = process(text, image);
-        torch::Tensor logits_tensor = torch::from_blob(logits.data(), {1, 256, 50265}).to(torch::kCPU);
-
         std::vector<uint32_t> token_ids;
-        max_length = std::min(max_length, 5);  // Shorten to 5 tokens
+        std::vector<int64_t> decoder_input_ids_vec = {0};  // BOS
+
+        const int64_t vocab_size = 50265;
+        max_length = std::min(max_length, 12);  // Match baseline
         for (int i = 0; i < max_length; ++i) {
-            torch::Tensor step_logits = logits_tensor[0][i];
+            std::vector<float> logits = process(text, image, decoder_input_ids_vec);
+            torch::Tensor logits_tensor = torch::from_blob(logits.data(), {1, 256, vocab_size}).to(torch::kCPU);
+            torch::Tensor step_logits = logits_tensor[0][i];  // Current step
+
+            // Debug logits for target tokens
+            std::cout << "Step " << i << " - Logits[250]: " << step_logits[250].item<float>()
+                      << ", Logits[879]: " << step_logits[879].item<float>() << std::endl;
+
             torch::Tensor max_indices = step_logits.argmax();
             uint32_t token_id = static_cast<uint32_t>(max_indices.item<int64_t>());
-            float max_logit = step_logits[token_id].item<float>();  // Fix: Use token_id index
+            float max_logit = step_logits[token_id].item<float>();
             float eos_logit = step_logits[2].item<float>();
             std::cout << "Step " << i << " - Token: " << token_id
                       << ", Max logit: " << max_logit
                       << ", EOS logit: " << eos_logit << std::endl;
             token_ids.push_back(token_id);
+            // Resize and update decoder_input_ids_vec safely
+            if (i + 1 < decoder_input_ids_vec.size()) {
+                decoder_input_ids_vec[i] = token_id;
+            } else {
+                decoder_input_ids_vec.push_back(token_id);
+            }
             if (token_id == 2) break;
         }
         if (token_ids.back() != 2) token_ids.push_back(2);

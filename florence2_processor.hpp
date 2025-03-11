@@ -15,9 +15,9 @@ namespace Florence2Processor {
         Florence2Processor(const std::string& model_path,
                            const std::string& tokenizer_json_path,
                            const std::string& image_config_path);
-        std::vector<float> process(const std::string& text, const cv::Mat& image);
+        std::vector<float> process(const std::string& text, const cv::Mat& image, const std::vector<int64_t>& decoder_input_ids);
         std::string decode(const std::vector<uint32_t>& token_ids, bool skip_special_tokens = true);
-        std::string generate(const std::string& text, const cv::Mat& image, int max_length = 20);  // New method
+        std::string generate(const std::string& text, const cv::Mat& image, int max_length = 12);
 
     private:
         Ort::Env env;
