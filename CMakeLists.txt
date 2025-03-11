@@ -84,7 +84,7 @@ endif()
 add_custom_command(TARGET bart-cpp POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/tokenizer.json" $<TARGET_FILE_DIR:bart-cpp>)
 add_custom_command(TARGET bart-cpp POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/config.json" $<TARGET_FILE_DIR:bart-cpp>)
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/preprocessor_config.json" $<TARGET_FILE_DIR:bart-cpp>)
 add_custom_command(TARGET bart-cpp POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/puma.png" $<TARGET_FILE_DIR:bart-cpp>)
 add_custom_command(TARGET bart-cpp POST_BUILD

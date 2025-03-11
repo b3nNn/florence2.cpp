@@ -15,9 +15,8 @@ namespace Florence2Processor {
         Florence2Processor(const std::string& model_path,
                            const std::string& tokenizer_json_path,
                            const std::string& image_config_path);
-
-        // Process input and return logits as a flat vector
         std::vector<float> process(const std::string& text, const cv::Mat& image);
+        std::string decode(const std::vector<uint32_t>& token_ids, bool skip_special_tokens = true);
 
     private:
         Ort::Env env;
