@@ -1,9 +1,17 @@
 #include "florence2_processor.hpp"
 #include <stdexcept>
-#include <vector>
-#include <memory>
+#include <windows.h>  // For MultiByteToWideChar
 
 namespace Florence2Processor {
+
+    // Convert std::string to std::wstring
+    std::wstring string_to_wstring(const std::string& str) {
+        if (str.empty()) return std::wstring();
+        int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
+        std::wstring wstr(size_needed, 0);
+        MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &wstr[0], size_needed);
+        return wstr;
+    }
 
     Florence2Processor::Florence2Processor(const std::string& model_path,
                                            const std::string& tokenizer_json_path,
@@ -12,12 +20,14 @@ namespace Florence2Processor {
               session(nullptr),
               tokenizer(tokenizer_json_path),
               image_processor(image_config_path) {
-        // Initialize ONNX Runtime session
         Ort::SessionOptions session_options;
         session_options.SetIntraOpNumThreads(1);
         session_options.SetGraphOptimizationLevel(ORT_ENABLE_BASIC);
+
+        // Convert model path to wide string
+        std::wstring w_model_path = string_to_wstring(model_path);
         try {
-            session = Ort::Session(env, model_path.c_str(), session_options);
+            session = Ort::Session(env, w_model_path.c_str(), session_options);
         } catch (const Ort::Exception& e) {
             throw std::runtime_error(std::string("Failed to load ONNX model: ") + e.what());
         }
@@ -28,14 +38,14 @@ namespace Florence2Processor {
         std::vector<uint32_t> token_ids = tokenizer.encode(text, true, 256, true, true, "longest");
         std::vector<int64_t> input_ids(token_ids.begin(), token_ids.end());
         std::vector<int64_t> attention_mask(token_ids.size(), 1);
-        input_ids.resize(256, 0);  // Pad to 256
+        input_ids.resize(256, 0);
         attention_mask.resize(256, 0);
 
-        // Dummy decoder_input_ids (BOS token = 0, padded to 256)
-        std::vector<int64_t> decoder_input_ids(256, 0);  // Adjust BOS if tokenizer specifies (e.g., 2)
+        // Dummy decoder_input_ids (BOS = 0, adjust if needed)
+        std::vector<int64_t> decoder_input_ids(256, 0);
 
         // Preprocess image
-        torch::Tensor image_tensor = image_processor.Preprocess(image);  // Assumes [0, 1] output, [1, 3, 224, 224]
+        torch::Tensor image_tensor = image_processor.Preprocess(image);
         if (image_tensor.sizes() != torch::IntArrayRef({1, 3, 224, 224})) {
             throw std::runtime_error("Image tensor shape mismatch, expected [1, 3, 224, 224]");
         }
@@ -47,23 +57,23 @@ namespace Florence2Processor {
 
         // pixel_values: [1, 3, 224, 224]
         std::vector<int64_t> pixel_shape = {1, 3, 224, 224};
-        inputs.push_back(Ort::Value::CreateTensor<float>(
+        inputs.emplace_back(Ort::Value::CreateTensor<float>(
                 memory_info, image_data.data(), image_data.size(), pixel_shape.data(), pixel_shape.size()));
 
         // input_ids: [1, 256]
         std::vector<int64_t> input_shape = {1, 256};
-        inputs.push_back(Ort::Value::CreateTensor<int64_t>(
+        inputs.emplace_back(Ort::Value::CreateTensor<int64_t>(
                 memory_info, input_ids.data(), input_ids.size(), input_shape.data(), input_shape.size()));
 
         // attention_mask: [1, 256]
-        inputs.push_back(Ort::Value::CreateTensor<int64_t>(
+        inputs.emplace_back(Ort::Value::CreateTensor<int64_t>(
                 memory_info, attention_mask.data(), attention_mask.size(), input_shape.data(), input_shape.size()));
 
         // decoder_input_ids: [1, 256]
-        inputs.push_back(Ort::Value::CreateTensor<int64_t>(
+        inputs.emplace_back(Ort::Value::CreateTensor<int64_t>(
                 memory_info, decoder_input_ids.data(), decoder_input_ids.size(), input_shape.data(), input_shape.size()));
 
-        // Define input and output names matching the ONNX model
+        // Define input/output names
         const char* input_names[] = {"pixel_values", "input_ids", "attention_mask", "decoder_input_ids"};
         const char* output_names[] = {"logits"};
 

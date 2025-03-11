@@ -6,20 +6,25 @@
 int main(int argc, char** argv) {
     try {
         Florence2Processor::Florence2Processor processor(
-                "pytorch_model.bin",
+                "florence2.onnx",
                 "tokenizer.json",
-                "preprocessor_config.json"
+                "config.json"
         );
 
-        cv::Mat image = cv::imread("example_image.jpg");
+        cv::Mat image = cv::imread("puma.png");
         if (image.empty()) {
-            throw std::runtime_error("Could not load image");
+            throw std::runtime_error("Failed to load image 'puma.png'");
         }
 
-        std::string text = "What is in the image?";
-        auto output = processor.process(text, image);
+        std::string text = "<CAPTION>";
+        std::vector<float> output = processor.process(text, image);
 
-        std::cout << "Output shape: " << output.sizes() << std::endl;
+        std::cout << "Inference output size: " << output.size() << std::endl;
+        std::cout << "First few logits: ";
+        for (size_t i = 0; i < std::min<size_t>(5, output.size()); ++i) {
+            std::cout << output[i] << " ";
+        }
+        std::cout << std::endl;
 
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
