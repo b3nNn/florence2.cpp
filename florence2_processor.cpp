@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "florence2_processor.hpp"
 #include <stdexcept>
 #include <windows.h>
@@ -33,6 +34,8 @@ namespace Florence2Processor {
         std::vector<int64_t> decoder_input_ids(256, 0);
 
         torch::Tensor image_tensor = image_processor.Preprocess(image);
+        std::cout << "Image tensor shape: " << image_tensor.sizes() << std::endl;
+        std::cout << "Image data sample (pixel [0,0]): " << image_tensor[0][0][0][0].item<float>() << std::endl;
         if (image_tensor.sizes() != torch::IntArrayRef({1, 3, 768, 768})) {
             throw std::runtime_error("Image tensor shape mismatch, expected [1, 3, 768, 768]");
         }
@@ -62,6 +65,36 @@ namespace Florence2Processor {
 
     std::string Florence2Processor::decode(const std::vector<uint32_t>& token_ids, bool skip_special_tokens) {
         return tokenizer.decode(token_ids, skip_special_tokens);
+    }
+
+    std::string Florence2Processor::generate(const std::string& text, const cv::Mat& image, int max_length) {
+        std::vector<float> logits = process(text, image);
+        torch::Tensor logits_tensor = torch::from_blob(logits.data(), {1, 256, 50265}).to(torch::kCPU);
+
+        std::vector<uint32_t> token_ids;
+        max_length = std::min(max_length, 5);  // Shorten to 5 tokens
+        for (int i = 0; i < max_length; ++i) {
+            torch::Tensor step_logits = logits_tensor[0][i];
+            torch::Tensor max_indices = step_logits.argmax();
+            uint32_t token_id = static_cast<uint32_t>(max_indices.item<int64_t>());
+            float max_logit = step_logits[token_id].item<float>();  // Fix: Use token_id index
+            float eos_logit = step_logits[2].item<float>();
+            std::cout << "Step " << i << " - Token: " << token_id
+                      << ", Max logit: " << max_logit
+                      << ", EOS logit: " << eos_logit << std::endl;
+            token_ids.push_back(token_id);
+            if (token_id == 2) break;
+        }
+        if (token_ids.back() != 2) token_ids.push_back(2);
+
+        std::cout << "Token IDs size: " << token_ids.size() << std::endl;
+        std::cout << "Token IDs: ";
+        for (size_t i = 0; i < token_ids.size(); ++i) {
+            std::cout << token_ids[i] << " ";
+        }
+        std::cout << std::endl;
+
+        return decode(token_ids, true);
     }
 
 } // namespace Florence2Processor
