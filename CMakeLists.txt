@@ -6,11 +6,6 @@ find_library(hf_tokenizers NAMES hf_tokenizers_c.dll PATHS "${CMAKE_SOURCE_DIR}/
 set(RUST_LIB_DIR "${CMAKE_SOURCE_DIR}/target/release")
 set(RUST_LIB_NAME "hf_tokenizers_c")
 
-# GGML library (unused in Florence-2, kept for completeness)
-set(GGML_LIB_DIR "${CMAKE_SOURCE_DIR}/llama.cpp/build/ggml/src/Release")
-set(GGML_DLL_DIR "${CMAKE_SOURCE_DIR}/llama.cpp/build/bin/Release")
-set(GGML_DLL_NAME "ggml-base")
-
 # ONNX Runtime
 set(ONNXRUNTIME_ROOT $ENV{ONNXRUNTIME_ROOT})
 include_directories(${ONNXRUNTIME_ROOT}/include)
@@ -26,28 +21,6 @@ if(NOT PROTOBUF_LIB)
     message(FATAL_ERROR "Could not find libprotobuf.lib. Ensure it’s in ${ONNXRUNTIME_LIB} or ${ONNXRUNTIME_ROOT}/lib.")
 endif()
 message(STATUS "Found libprotobuf.lib at: ${PROTOBUF_LIB}")
-
-## Find Abseil libraries
-#set(ABSL_LIBS_NAMES
-#        absl_hash
-#        absl_base
-#        absl_strings
-#        absl_raw_hash_set
-#        absl_synchronization  # Common Abseil libs needed by ONNX Runtime
-#        )
-#foreach(lib ${ABSL_LIBS_NAMES})
-#    find_library(${lib}_LIB
-#            NAMES ${lib}
-#            PATHS "${ONNXRUNTIME_LIB}" "${ONNXRUNTIME_ROOT}/lib" "${ONNXRUNTIME_ROOT}/build/Release"
-#            DOC "Path to ${lib}.lib"
-#            )
-#    if(NOT ${lib}_LIB)
-#        message(WARNING "Could not find ${lib}.lib. This may cause linker errors.")
-#    else()
-#        message(STATUS "Found ${lib}.lib at: ${${lib}_LIB}")
-#        list(APPEND ABSL_LIBS ${${lib}_LIB})
-#    endif()
-#endforeach()
 
 # Torch
 set(Torch_DIR $ENV{Torch_DIR})
@@ -98,8 +71,6 @@ if(WIN32)
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${TORCH_DLLS} $<TARGET_FILE_DIR:bart-cpp>)
     add_custom_command(TARGET bart-cpp POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "${RUST_LIB_DIR}/${RUST_LIB_NAME}.dll" $<TARGET_FILE_DIR:bart-cpp>)
-    add_custom_command(TARGET bart-cpp POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GGML_DLL_DIR}/${GGML_DLL_NAME}.dll" $<TARGET_FILE_DIR:bart-cpp>)
     add_custom_command(TARGET bart-cpp POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "$ENV{OpenCV_BIN}/opencv_world4110.dll" $<TARGET_FILE_DIR:bart-cpp>)
     add_custom_command(TARGET bart-cpp POST_BUILD
