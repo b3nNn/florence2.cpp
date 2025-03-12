@@ -6,6 +6,7 @@
 #include <opencv2/opencv.hpp>
 #include "ggml.h"
 #include "gguf.h"  // From llama.cpp for GGUF parsing
+#include "ggml-alloc.h" // From llama.cpp
 #include "bart_tokenizer_fast.hpp"
 #include "clip_image_processor.hpp"
 
@@ -35,6 +36,20 @@ namespace Florence2Processor {
 
     private:
         ggml_context* ctx;
+        ggml_gallocr_t galloc;
+        ggml_cgraph* graph; // Single reusable graph
+        ggml_tensor* pixel_values_prealloc;
+        ggml_tensor* conv0_output;
+        ggml_tensor* conv0_bias;
+        ggml_tensor* norm0_prealloc;
+        ggml_tensor* conv1_output;
+        ggml_tensor* conv1_bias;
+        ggml_tensor* norm1_prealloc;
+        ggml_tensor* conv2_output;
+        ggml_tensor* conv2_bias;
+        ggml_tensor* norm2_prealloc;
+        ggml_tensor* input_ids_tensor_prealloc;
+        ggml_tensor* decoder_input_ids_tensor_prealloc;
         gguf_context* gguf_ctx;
         std::unordered_map<std::string, ggml_tensor*> tensors;
         BartTokenizerFast tokenizer;
