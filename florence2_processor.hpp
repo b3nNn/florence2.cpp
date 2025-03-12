@@ -52,7 +52,7 @@ namespace Florence2Processor {
         // Helper functions
         ggml_tensor* load_tensor(const std::string& name);
         void initialize_ggml_context(const std::string& gguf_path);
-        int get_metadata_int(const std::string& key);
+        int get_metadata_int(gguf_context* ctx, const std::string& key);
     };
 
 } // namespace Florence2Processor

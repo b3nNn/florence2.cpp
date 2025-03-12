@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <iostream>
 #include <unordered_map>
+#include <opencv2/opencv.hpp> // Ensure OpenCV header is included
 
 namespace Florence2Processor {
 
@@ -23,16 +24,76 @@ namespace Florence2Processor {
         if (!std::filesystem::exists(tokenizer_json_path)) throw std::runtime_error("Tokenizer file not found: " + tokenizer_json_path);
         if (!std::filesystem::exists(image_config_path)) throw std::runtime_error("Image config file not found: " + image_config_path);
 
+        cv::setNumThreads(0); // Disable OpenCV parallel backends
+
+        // Expected values from config.json and convert.py
+        const uint32_t expected_vocab_size = 51289;
+        const uint32_t expected_t_dec_layers = 12;
+        const uint32_t expected_t_enc_layers = 12;
+        const uint32_t expected_t_heads = 16;
+        const uint32_t expected_t_hidden = 1024;
+        const uint32_t expected_t_ffn_dim = 4096;
+        const uint32_t expected_v_img_size = 768;
+
+        // Load and validate metadata
+        gguf_init_params gguf_params = { .no_alloc = true, .ctx = NULL };
+        gguf_context* temp_ctx = gguf_init_from_file(gguf_path.c_str(), gguf_params);
+        if (!temp_ctx) throw std::runtime_error("Failed to initialize GGUF context from file: " + gguf_path);
+
+        vocab_size = get_metadata_int(temp_ctx, "vocab_size");
+        std::cout << "Loaded vocab_size: " << vocab_size << "\n";
+        if (vocab_size != expected_vocab_size) {
+            throw std::runtime_error("Metadata mismatch: vocab_size = " + std::to_string(vocab_size) +
+                                     ", expected " + std::to_string(expected_vocab_size));
+        }
+
+        t_dec_layers = get_metadata_int(temp_ctx, "t_dec_layers");
+        std::cout << "Loaded t_dec_layers: " << t_dec_layers << "\n";
+        if (t_dec_layers <= 0 || static_cast<uint32_t>(t_dec_layers) != expected_t_dec_layers) {
+            throw std::runtime_error("Metadata mismatch: t_dec_layers = " + std::to_string(t_dec_layers) +
+                                     ", expected " + std::to_string(expected_t_dec_layers));
+        }
+
+        t_enc_layers = get_metadata_int(temp_ctx, "t_enc_layers");
+        std::cout << "Loaded t_enc_layers: " << t_enc_layers << "\n";
+        if (t_enc_layers <= 0 || static_cast<uint32_t>(t_enc_layers) != expected_t_enc_layers) {
+            throw std::runtime_error("Metadata mismatch: t_enc_layers = " + std::to_string(t_enc_layers) +
+                                     ", expected " + std::to_string(expected_t_enc_layers));
+        }
+
+        t_heads = get_metadata_int(temp_ctx, "t_heads");
+        std::cout << "Loaded t_heads: " << t_heads << "\n";
+        if (t_heads <= 0 || static_cast<uint32_t>(t_heads) != expected_t_heads) {
+            throw std::runtime_error("Metadata mismatch: t_heads = " + std::to_string(t_heads) +
+                                     ", expected " + std::to_string(expected_t_heads));
+        }
+
+        t_hidden = get_metadata_int(temp_ctx, "t_hidden");
+        std::cout << "Loaded t_hidden: " << t_hidden << "\n";
+        if (t_hidden <= 0 || static_cast<uint32_t>(t_hidden) != expected_t_hidden) {
+            throw std::runtime_error("Metadata mismatch: t_hidden = " + std::to_string(t_hidden) +
+                                     ", expected " + std::to_string(expected_t_hidden));
+        }
+
+        t_ffn_dim = get_metadata_int(temp_ctx, "t_ffn_dim");
+        std::cout << "Loaded t_ffn_dim: " << t_ffn_dim << "\n";
+        if (t_ffn_dim <= 0 || static_cast<uint32_t>(t_ffn_dim) != expected_t_ffn_dim) {
+            throw std::runtime_error("Metadata mismatch: t_ffn_dim = " + std::to_string(t_ffn_dim) +
+                                     ", expected " + std::to_string(expected_t_ffn_dim));
+        }
+
+        v_img_size = get_metadata_int(temp_ctx, "v_img_size");
+        std::cout << "Loaded v_img_size: " << v_img_size << "\n";
+        if (v_img_size <= 0 || static_cast<uint32_t>(v_img_size) != expected_v_img_size) {
+            throw std::runtime_error("Metadata mismatch: v_img_size = " + std::to_string(v_img_size) +
+                                     ", expected " + std::to_string(expected_v_img_size));
+        }
+        gguf_free(temp_ctx);
+
+        // Initialize gguf ctx with pre-allocated memory
         initialize_ggml_context(gguf_path);
 
-        vocab_size = get_metadata_int("vocab_size");
-        t_dec_layers = get_metadata_int("t_dec_layers");
-        t_enc_layers = get_metadata_int("t_enc_layers");
-        t_heads = get_metadata_int("t_heads");
-        t_hidden = get_metadata_int("t_hidden");
-        t_ffn_dim = get_metadata_int("t_ffn_dim");
-        v_img_size = get_metadata_int("v_img_size");
-
+        // Add special tokens
         std::vector<std::string> special_tokens;
         for (int i = 0; i < 1000; i++) special_tokens.push_back("<loc_" + std::to_string(i) + ">");
         special_tokens.insert(special_tokens.end(), {"<od>", "</od>", "<ocr>", "</ocr>", "<cap>", "</cap>", "<ncap>", "</ncap>",
@@ -49,27 +110,66 @@ namespace Florence2Processor {
     }
 
     void Florence2Processor::initialize_ggml_context(const std::string& gguf_path) {
-        ggml_init_params params = { .mem_size = 16 * 1024 * 1024, .mem_buffer = NULL };
-        ctx = ggml_init(params);
+        // Step 1: Calculate GGUF tensor memory (metadata + rough tensor estimate)
+        gguf_init_params gguf_params = { .no_alloc = true, .ctx = NULL };
+        gguf_context* temp_ctx = gguf_init_from_file(gguf_path.c_str(), gguf_params);
+        if (!temp_ctx) throw std::runtime_error("Failed to initialize GGUF context from file: " + gguf_path);
 
-        gguf_init_params gguf_params = { .no_alloc = false, .ctx = &ctx };
+        size_t gguf_size = gguf_get_meta_size(temp_ctx);
+        int n_tensors = gguf_get_n_tensors(temp_ctx);
+        // Rough estimate: assume average tensor size based on prior runs (~1.83 GB total for tensors)
+        size_t avg_tensor_size = (1831148768ULL / n_tensors); // From previous "used" value
+        gguf_size += n_tensors * (avg_tensor_size + GGML_TENSOR_SIZE);
+
+        // Step 2: Estimate runtime tensor memory from process()
+        size_t runtime_size = 0;
+        runtime_size += 768 * 768 * 3 * 1 * 2 + GGML_TENSOR_SIZE; // pixel_values
+        runtime_size += 256 * 1 * 8 + GGML_TENSOR_SIZE; // input_ids_tensor
+        runtime_size += 5 * 1 * 8 + GGML_TENSOR_SIZE; // decoder_input_ids_tensor (max_length=5)
+        size_t past_tensor_size = 64 * 833 * 16 * 1 * 2; // ~1.7 MB per tensor
+        runtime_size += t_dec_layers * 4 * (past_tensor_size + GGML_TENSOR_SIZE); // past key/values
+
+        // Step 3: Add graph overhead
+        size_t graph_size = 455 * GGML_TENSOR_SIZE; // ~116 KB
+
+        // Step 4: Total size with safety margin
+        size_t total_size = gguf_size + runtime_size + graph_size;
+        total_size += 64ULL * 1024 * 1024; // 64 MB safety buffer
+        total_size = GGML_PAD(total_size, GGML_MEM_ALIGN);
+
+        gguf_free(temp_ctx); // Free temporary context
+
+        // Step 5: Initialize GGML context
+        ggml_init_params params = { .mem_size = total_size, .mem_buffer = NULL };
+        ctx = ggml_init(params);
+        if (!ctx) throw std::runtime_error("Failed to initialize GGML context with " + std::to_string(total_size) + " bytes");
+        std::cout << "Allocated GGML memory: " << total_size << " bytes\n";
+
+        // Step 6: Load GGUF with tensor allocation into GGML context
+        gguf_params = { .no_alloc = false, .ctx = &ctx };
         gguf_ctx = gguf_init_from_file(gguf_path.c_str(), gguf_params);
         if (!gguf_ctx) throw std::runtime_error("Failed to initialize GGUF context from file: " + gguf_path);
 
-        int n_tensors = gguf_get_n_tensors(gguf_ctx);
+        // Step 7: Populate tensor map with all exported tensors
         for (int i = 0; i < n_tensors; i++) {
             const char* name = gguf_get_tensor_name(gguf_ctx, i);
             ggml_tensor* tensor = ggml_get_tensor(ctx, name);
-            if (!tensor) throw std::runtime_error("Failed to load tensor: " + std::string(name));
+            if (!tensor) {
+                throw std::runtime_error("Failed to retrieve tensor from GGML context: " + std::string(name));
+            }
             tensors[name] = tensor;
+            std::cout << "Loaded tensor: " << name << "\n"; // Debug output
         }
+
+        size_t used_mem = ggml_used_mem(ctx);
+        std::cout << "GGML memory used after loading: " << used_mem << " bytes\n";
     }
 
-    int Florence2Processor::get_metadata_int(const std::string& key) {
-        int idx = gguf_find_key(gguf_ctx, key.c_str());
+    int Florence2Processor::get_metadata_int(gguf_context* ctx, const std::string& key) {
+        int idx = gguf_find_key(ctx, key.c_str());
         if (idx == -1) throw std::runtime_error("Metadata key not found: " + key);
-        if (gguf_get_kv_type(gguf_ctx, idx) != GGUF_TYPE_UINT32) throw std::runtime_error("Metadata key " + key + " is not uint32");
-        return gguf_get_val_u32(gguf_ctx, idx);
+        if (gguf_get_kv_type(ctx, idx) != GGUF_TYPE_UINT32) throw std::runtime_error("Metadata key " + key + " is not uint32");
+        return gguf_get_val_u32(ctx, idx);
     }
 
     ggml_tensor* Florence2Processor::load_tensor(const std::string& name) {
