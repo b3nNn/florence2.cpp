@@ -32,7 +32,7 @@ pub extern "C" fn free_token_ids(ids: *mut u32) {
 // Opaque pointer to Tokenizer for C
 #[repr(C)]
 pub struct CTokenizer {
-    _private: [u8; 0], // Prevents direct construction
+    _private: [u8; 0],
 }
 
 // Load a tokenizer from a JSON file (e.g., tokenizer.json)
@@ -341,5 +341,37 @@ pub extern "C" fn free_special_tokens(
         if !ids.is_null() {
             libc::free(ids as *mut c_void);
         }
+    }
+}
+
+// Add multiple special tokens
+#[no_mangle]
+pub extern "C" fn tokenizer_add_special_tokens(
+    tokenizer: *mut CTokenizer,
+    tokens: *const *const c_char,
+    count: usize,
+) -> usize {
+    unsafe {
+        if tokenizer.is_null() || tokens.is_null() || count == 0 {
+            return 0; // Number of tokens added
+        }
+        let tokenizer = &mut *(tokenizer as *mut Tokenizer);
+
+        // Convert C array of char* to Vec<String>
+        let mut rust_tokens = Vec::with_capacity(count);
+        for i in 0..count {
+            let token_ptr = *tokens.offset(i as isize);
+            if token_ptr.is_null() {
+                return 0; // Null pointer in array
+            }
+            match CStr::from_ptr(token_ptr).to_str() {
+                Ok(token) => rust_tokens.push(AddedToken::from(token, true)),
+                Err(_) => return 0, // Invalid UTF-8
+            }
+        }
+
+        // Add special tokens
+        let num_added = tokenizer.add_special_tokens(&rust_tokens);
+        num_added // Return number of tokens successfully added
     }
 }

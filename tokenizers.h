@@ -1,59 +1,69 @@
 #ifndef TOKENIZERS_H
 #define TOKENIZERS_H
 
-#include <stdarg.h>
-#include <stdbool.h>
 #include <stdint.h>
-#include <stdlib.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct CTokenizer {
-  uint8_t _private[0];
-} CTokenizer;
+typedef struct CTokenizer CTokenizer;
 
-void free_c_string(char *s);
+// Load a tokenizer from a JSON file
+CTokenizer* tokenizer_from_file(const char* file_path);
 
-void free_token_ids(uint32_t *ids);
+// Free the tokenizer
+void tokenizer_free(CTokenizer* tokenizer);
 
-struct CTokenizer *tokenizer_from_file(const char *file_path);
+// Encode text into token IDs (updated for attention mask)
+bool tokenizer_encode(
+        CTokenizer* tokenizer,
+        const char* text,
+        uint32_t** ids_out,
+        size_t* len_out,
+        uint32_t** attention_mask_out,
+        size_t* mask_len_out,
+        size_t max_length,
+        bool truncation,
+        bool padding,
+        const char* padding_strategy
+);
 
-void tokenizer_free(struct CTokenizer *tokenizer);
+// Free the token IDs array
+void free_token_ids(uint32_t* ids);
 
-bool tokenizer_encode(struct CTokenizer *tokenizer,
-                      const char *text,
-                      uint32_t **ids_out,
-                      uintptr_t *ids_len_out,
-                      uint32_t **attention_mask_out,
-                      uintptr_t *mask_len_out,
-                      uintptr_t max_length,
-                      bool truncation,
-                      bool padding,
-                      const char *padding_strategy);
+// Decode token IDs back to text
+char* tokenizer_decode(CTokenizer* tokenizer, const uint32_t* ids, size_t len, bool skip_special_tokens);
 
-char *tokenizer_decode(struct CTokenizer *tokenizer,
-                       const uint32_t *ids,
-                       uintptr_t len,
-                       bool skip_special_tokens);
+// Free a C string allocated by Rust
+void free_c_string(char* s);
 
-uintptr_t tokenizer_get_vocab_size(struct CTokenizer *tokenizer);
+// Get the vocabulary size
+size_t tokenizer_get_vocab_size(CTokenizer* tokenizer);
 
-bool tokenizer_get_special_token_id(struct CTokenizer *tokenizer,
-                                    const char *token,
-                                    uint32_t *id_out);
+// Get a special token ID
+bool tokenizer_get_special_token_id(CTokenizer* tokenizer, const char* token, uint32_t* id_out);
 
-uint32_t tokenizer_add_special_token(struct CTokenizer *tokenizer, const char *token);
+// Add a single special token
+uint32_t tokenizer_add_special_token(CTokenizer* tokenizer, const char* token);
 
-bool tokenizer_is_special_token(struct CTokenizer *tokenizer, uint32_t id);
+// Add multiple special tokens
+size_t tokenizer_add_special_tokens(CTokenizer* tokenizer, const char** tokens, size_t count);
 
-bool tokenizer_get_special_tokens(struct CTokenizer *tokenizer,
-                                  char ***tokens_out,
-                                  uint32_t **ids_out,
-                                  uintptr_t *count_out);
+// Check if a token ID is a special token
+bool tokenizer_is_special_token(CTokenizer* tokenizer, uint32_t id);
 
-void free_special_tokens(char **tokens, uint32_t *ids, uintptr_t count);
+// Get all special tokens
+bool tokenizer_get_special_tokens(
+        CTokenizer* tokenizer,
+        char*** tokens_out,
+        uint32_t** ids_out,
+        size_t* count_out
+);
+
+// Free the special tokens arrays
+void free_special_tokens(char** tokens, uint32_t* ids, size_t count);
 
 #ifdef __cplusplus
 }

@@ -1,70 +1,180 @@
-#define NOMINMAX
 #include "florence2_processor.hpp"
-#include <stdexcept>
-#include <windows.h>
+#include <ggml.h>
+#include <ggml-cpu.h>
+#include <gguf.h>
+#include <filesystem>
+#include <iostream>
+#include <unordered_map>
 
 namespace Florence2Processor {
 
-    std::wstring string_to_wstring(const std::string& str) {
-        if (str.empty()) return std::wstring();
-        int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
-        std::wstring wstr(size_needed, 0);
-        MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &wstr[0], size_needed);
-        return wstr;
+    static const std::unordered_map<std::string, std::string> task_prompts = {
+            {"<CAPTION>", "<cap>"},
+            {"<OD>", "<od>"},
+            {"<OCR>", "<ocr>"}
+    };
+
+    static const int image_seq_length = 833;
+
+    Florence2Processor::Florence2Processor(const std::string& gguf_path, const std::string& tokenizer_json_path, const std::string& image_config_path)
+            : tokenizer(tokenizer_json_path), image_processor(image_config_path, 768) {
+        std::cout << "Checking files...\n";
+        if (!std::filesystem::exists(gguf_path)) throw std::runtime_error("GGUF file not found: " + gguf_path);
+        if (!std::filesystem::exists(tokenizer_json_path)) throw std::runtime_error("Tokenizer file not found: " + tokenizer_json_path);
+        if (!std::filesystem::exists(image_config_path)) throw std::runtime_error("Image config file not found: " + image_config_path);
+
+        initialize_ggml_context(gguf_path);
+
+        vocab_size = get_metadata_int("vocab_size");
+        t_dec_layers = get_metadata_int("t_dec_layers");
+        t_enc_layers = get_metadata_int("t_enc_layers");
+        t_heads = get_metadata_int("t_heads");
+        t_hidden = get_metadata_int("t_hidden");
+        t_ffn_dim = get_metadata_int("t_ffn_dim");
+        v_img_size = get_metadata_int("v_img_size");
+
+        std::vector<std::string> special_tokens;
+        for (int i = 0; i < 1000; i++) special_tokens.push_back("<loc_" + std::to_string(i) + ">");
+        special_tokens.insert(special_tokens.end(), {"<od>", "</od>", "<ocr>", "</ocr>", "<cap>", "</cap>", "<ncap>", "</ncap>",
+                                                     "<dcap>", "</dcap>", "<grounding>", "</grounding>", "<seg>", "</seg>",
+                                                     "<sep>", "<region_cap>", "</region_cap>", "<region_to_desciption>",
+                                                     "</region_to_desciption>", "<proposal>", "</proposal>", "<poly>", "</poly>", "<and>"});
+        tokenizer.add_special_tokens(special_tokens);
+        std::cout << "Processor initialized\n";
     }
 
-    Florence2Processor::Florence2Processor(const std::string& model_path,
-                                           const std::string& tokenizer_json_path,
-                                           const std::string& image_config_path)
-            : env(ORT_LOGGING_LEVEL_WARNING, "Florence2"),
-              session(nullptr),
-              tokenizer(tokenizer_json_path),
-              image_processor(image_config_path, 768) {
-        Ort::SessionOptions session_options;
-        session_options.SetIntraOpNumThreads(1);
-        session_options.SetGraphOptimizationLevel(ORT_ENABLE_BASIC);
-        std::wstring w_model_path = string_to_wstring(model_path);
-        session = Ort::Session(env, w_model_path.c_str(), session_options);
+    Florence2Processor::~Florence2Processor() {
+        gguf_free(gguf_ctx);
+        ggml_free(ctx);
     }
 
-    // Updated process to take decoder_input_ids
-    std::vector<float> Florence2Processor::process(const std::string& text, const cv::Mat& image, const std::vector<int64_t>& decoder_input_ids) {
-        std::vector<uint32_t> token_ids = tokenizer.encode(text, true, 256, true, true, "longest");
+    void Florence2Processor::initialize_ggml_context(const std::string& gguf_path) {
+        ggml_init_params params = { .mem_size = 16 * 1024 * 1024, .mem_buffer = NULL };
+        ctx = ggml_init(params);
+
+        gguf_init_params gguf_params = { .no_alloc = false, .ctx = &ctx };
+        gguf_ctx = gguf_init_from_file(gguf_path.c_str(), gguf_params);
+        if (!gguf_ctx) throw std::runtime_error("Failed to initialize GGUF context from file: " + gguf_path);
+
+        int n_tensors = gguf_get_n_tensors(gguf_ctx);
+        for (int i = 0; i < n_tensors; i++) {
+            const char* name = gguf_get_tensor_name(gguf_ctx, i);
+            ggml_tensor* tensor = ggml_get_tensor(ctx, name);
+            if (!tensor) throw std::runtime_error("Failed to load tensor: " + std::string(name));
+            tensors[name] = tensor;
+        }
+    }
+
+    int Florence2Processor::get_metadata_int(const std::string& key) {
+        int idx = gguf_find_key(gguf_ctx, key.c_str());
+        if (idx == -1) throw std::runtime_error("Metadata key not found: " + key);
+        if (gguf_get_kv_type(gguf_ctx, idx) != GGUF_TYPE_UINT32) throw std::runtime_error("Metadata key " + key + " is not uint32");
+        return gguf_get_val_u32(gguf_ctx, idx);
+    }
+
+    ggml_tensor* Florence2Processor::load_tensor(const std::string& name) {
+        auto it = tensors.find(name);
+        if (it == tensors.end()) throw std::runtime_error("Tensor not found: " + name);
+        return it->second;
+    }
+
+    ModelOutput Florence2Processor::process(const std::string& text, const cv::Mat& image, const std::vector<int64_t>& decoder_input_ids,
+                                            const std::vector<PastKeyValueLayer>& past_key_values) {
+        std::cout << "Processing text: " << text << "\n";
+        std::string prompt = task_prompts.count(text) ? task_prompts.at(text) : text;
+        std::vector<uint32_t> token_ids = tokenizer.encode(prompt, true, 256 - image_seq_length, true, true, "longest");
         std::vector<int64_t> input_ids(token_ids.begin(), token_ids.end());
         input_ids.resize(256, 0);
 
+        if (image.empty()) throw std::runtime_error("Image is empty—check file path or cv::imread");
         torch::Tensor image_tensor = image_processor.Preprocess(image);
-        std::cout << "Image tensor shape: " << image_tensor.sizes() << std::endl;
-        std::cout << "Image data sample (pixel [0,0]): " << image_tensor[0][0][0][0].item<float>() << std::endl;
-        if (image_tensor.sizes() != torch::IntArrayRef({1, 3, 768, 768})) {
-            throw std::runtime_error("Image tensor shape mismatch, expected [1, 3, 768, 768]");
-        }
         std::vector<float> image_data(image_tensor.data_ptr<float>(), image_tensor.data_ptr<float>() + image_tensor.numel());
 
-        Ort::MemoryInfo memory_info("Cpu", OrtDeviceAllocator, 0, OrtMemTypeDefault);
-        std::vector<Ort::Value> inputs;
-        std::vector<int64_t> pixel_shape = {1, 3, 768, 768};
-        inputs.emplace_back(Ort::Value::CreateTensor<float>(
-                memory_info, image_data.data(), image_data.size(), pixel_shape.data(), pixel_shape.size()));
-        std::vector<int64_t> input_shape = {1, 256};
-        inputs.emplace_back(Ort::Value::CreateTensor<int64_t>(
-                memory_info, input_ids.data(), input_ids.size(), input_shape.data(), input_shape.size()));
+        ggml_tensor* pixel_values = ggml_new_tensor_4d(ctx, GGML_TYPE_F16, 768, 768, 3, 1);
+        float* pixel_data = static_cast<float*>(ggml_get_data(pixel_values));
+        std::copy(image_data.begin(), image_data.end(), pixel_data);
 
-        // Ensure decoder_input_ids is padded to 256
-        std::vector<int64_t> padded_decoder_input_ids = decoder_input_ids;
-        padded_decoder_input_ids.resize(256, 0);
-        inputs.emplace_back(Ort::Value::CreateTensor<int64_t>(
-                memory_info, padded_decoder_input_ids.data(), padded_decoder_input_ids.size(), input_shape.data(), input_shape.size()));
+        ggml_tensor* input_ids_tensor = ggml_new_tensor_2d(ctx, GGML_TYPE_I64, 256, 1);
+        int64_t* input_ids_data = static_cast<int64_t*>(ggml_get_data(input_ids_tensor));
+        std::copy(input_ids.begin(), input_ids.end(), input_ids_data);
 
-        const char* input_names[] = {"pixel_values", "input_ids", "decoder_input_ids"};
-        const char* output_names[] = {"logits"};
-        std::vector<Ort::Value> output_tensors = session.Run(Ort::RunOptions{}, input_names, inputs.data(), 3, output_names, 1);
-        float* output_data = output_tensors[0].GetTensorMutableData<float>();
-        std::vector<int64_t> output_shape = output_tensors[0].GetTensorTypeAndShapeInfo().GetShape();
-        size_t output_size = 1;
-        for (auto dim : output_shape) output_size *= dim;
+        ggml_tensor* decoder_input_ids_tensor = ggml_new_tensor_2d(ctx, GGML_TYPE_I64, decoder_input_ids.size(), 1);
+        int64_t* decoder_ids_data = static_cast<int64_t*>(ggml_get_data(decoder_input_ids_tensor));
+        std::copy(decoder_input_ids.begin(), decoder_input_ids.end(), decoder_ids_data);
 
-        return std::vector<float>(output_data, output_data + output_size);
+        std::vector<ggml_tensor*> past_self_keys(t_dec_layers), past_self_values(t_dec_layers);
+        std::vector<ggml_tensor*> past_cross_keys(t_dec_layers), past_cross_values(t_dec_layers);
+        size_t past_seq_len = past_key_values.empty() ? 0 : past_key_values[0].self_key.size() / (16 * 64);
+        if (!past_key_values.empty()) {
+            for (int i = 0; i < t_dec_layers; ++i) {
+                past_self_keys[i] = ggml_new_tensor_4d(ctx, GGML_TYPE_F16, 64, past_seq_len, 16, 1);
+                past_self_values[i] = ggml_new_tensor_4d(ctx, GGML_TYPE_F16, 64, past_seq_len, 16, 1);
+                past_cross_keys[i] = ggml_new_tensor_4d(ctx, GGML_TYPE_F16, 64, 833, 16, 1);
+                past_cross_values[i] = ggml_new_tensor_4d(ctx, GGML_TYPE_F16, 64, 833, 16, 1);
+
+                float* self_key_data = static_cast<float*>(ggml_get_data(past_self_keys[i]));
+                float* self_value_data = static_cast<float*>(ggml_get_data(past_self_values[i]));
+                float* cross_key_data = static_cast<float*>(ggml_get_data(past_cross_keys[i]));
+                float* cross_value_data = static_cast<float*>(ggml_get_data(past_cross_values[i]));
+                std::copy(past_key_values[i].self_key.begin(), past_key_values[i].self_key.end(), self_key_data);
+                std::copy(past_key_values[i].self_value.begin(), past_key_values[i].self_value.end(), self_value_data);
+                std::copy(past_key_values[i].cross_key.begin(), past_key_values[i].cross_key.end(), cross_key_data);
+                std::copy(past_key_values[i].cross_value.begin(), past_key_values[i].cross_value.end(), cross_value_data);
+            }
+        }
+
+        ggml_tensor* v_pjw = load_tensor("v_pjw");
+        ggml_tensor* vision_output = ggml_mul_mat(ctx, v_pjw, pixel_values);
+
+        ggml_tensor* encoder_output = input_ids_tensor;
+        for (int i = 0; i < t_enc_layers; ++i) {
+            ggml_tensor* te_qw = load_tensor("te" + std::to_string(i) + "a_qw");
+            encoder_output = ggml_mul_mat(ctx, te_qw, encoder_output);
+        }
+
+        std::vector<ggml_tensor*> new_self_keys(t_dec_layers), new_self_values(t_dec_layers);
+        std::vector<ggml_tensor*> new_cross_keys(t_dec_layers), new_cross_values(t_dec_layers);
+        ggml_tensor* decoder_output = decoder_input_ids_tensor;
+        for (int i = 0; i < t_dec_layers; ++i) {
+            ggml_tensor* t_qw = load_tensor("t" + std::to_string(i) + "a_qw");
+            ggml_tensor* t_c_qw = load_tensor("t" + std::to_string(i) + "c_qw");
+            decoder_output = ggml_mul_mat(ctx, t_qw, decoder_output);
+            decoder_output = ggml_mul_mat(ctx, t_c_qw, encoder_output);
+            new_self_keys[i] = decoder_output;
+            new_self_values[i] = decoder_output;
+            new_cross_keys[i] = encoder_output;
+            new_cross_values[i] = encoder_output;
+        }
+
+        ggml_tensor* t_out_w = load_tensor("t_out_w");
+        ggml_tensor* logits = ggml_mul_mat(ctx, t_out_w, decoder_output);
+
+        ModelOutput output;
+        output.logits.resize(vocab_size);
+        float* logits_data = static_cast<float*>(ggml_get_data(logits));
+        std::copy(logits_data, logits_data + vocab_size, output.logits.begin());
+        output.past_key_values.resize(t_dec_layers);
+        for (int i = 0; i < t_dec_layers; ++i) {
+            size_t self_size = new_self_keys[i]->ne[0] * new_self_keys[i]->ne[1] * new_self_keys[i]->ne[2];
+            size_t cross_size = new_cross_keys[i]->ne[0] * new_cross_keys[i]->ne[1] * new_cross_keys[i]->ne[2];
+            output.past_key_values[i].self_key.resize(self_size);
+            output.past_key_values[i].self_value.resize(self_size);
+            output.past_key_values[i].cross_key.resize(cross_size);
+            output.past_key_values[i].cross_value.resize(cross_size);
+            float* self_key_data = static_cast<float*>(ggml_get_data(new_self_keys[i]));
+            float* self_value_data = static_cast<float*>(ggml_get_data(new_self_values[i]));
+            float* cross_key_data = static_cast<float*>(ggml_get_data(new_cross_keys[i]));
+            float* cross_value_data = static_cast<float*>(ggml_get_data(new_cross_values[i]));
+            std::copy(self_key_data, self_key_data + self_size, output.past_key_values[i].self_key.begin());
+            std::copy(self_value_data, self_value_data + self_size, output.past_key_values[i].self_value.begin());
+            std::copy(cross_key_data, cross_key_data + cross_size, output.past_key_values[i].cross_key.begin());
+            std::copy(cross_value_data, cross_value_data + cross_size, output.past_key_values[i].cross_value.begin());
+        }
+
+        ggml_cgraph* gf = ggml_new_graph(ctx);
+        ggml_build_forward_expand(gf, logits);
+        ggml_graph_compute_with_ctx(ctx, gf, GGML_DEFAULT_N_THREADS);
+        return output;
     }
 
     std::string Florence2Processor::decode(const std::vector<uint32_t>& token_ids, bool skip_special_tokens) {
@@ -73,45 +183,50 @@ namespace Florence2Processor {
 
     std::string Florence2Processor::generate(const std::string& text, const cv::Mat& image, int max_length) {
         std::vector<uint32_t> token_ids;
-        std::vector<int64_t> decoder_input_ids_vec = {0};  // BOS
+        std::vector<int64_t> decoder_input_ids = {0};
+        std::vector<PastKeyValueLayer> past_key_values;
 
-        const int64_t vocab_size = 50265;
-        max_length = std::min(max_length, 12);  // Match baseline
         for (int i = 0; i < max_length; ++i) {
-            std::vector<float> logits = process(text, image, decoder_input_ids_vec);
-            torch::Tensor logits_tensor = torch::from_blob(logits.data(), {1, 256, vocab_size}).to(torch::kCPU);
-            torch::Tensor step_logits = logits_tensor[0][i];  // Current step
-
-            // Debug logits for target tokens
-            std::cout << "Step " << i << " - Logits[250]: " << step_logits[250].item<float>()
-                      << ", Logits[879]: " << step_logits[879].item<float>() << std::endl;
-
-            torch::Tensor max_indices = step_logits.argmax();
-            uint32_t token_id = static_cast<uint32_t>(max_indices.item<int64_t>());
-            float max_logit = step_logits[token_id].item<float>();
-            float eos_logit = step_logits[2].item<float>();
-            std::cout << "Step " << i << " - Token: " << token_id
-                      << ", Max logit: " << max_logit
-                      << ", EOS logit: " << eos_logit << std::endl;
-            token_ids.push_back(token_id);
-            // Resize and update decoder_input_ids_vec safely
-            if (i + 1 < decoder_input_ids_vec.size()) {
-                decoder_input_ids_vec[i] = token_id;
-            } else {
-                decoder_input_ids_vec.push_back(token_id);
+            ModelOutput output = process(text, image, decoder_input_ids, past_key_values);
+            float max_val = output.logits[0];
+            uint32_t token_id = 0;
+            for (size_t j = 1; j < output.logits.size(); ++j) {
+                if (output.logits[j] > max_val) {
+                    max_val = output.logits[j];
+                    token_id = static_cast<uint32_t>(j);
+                }
             }
+            token_ids.push_back(token_id);
+            decoder_input_ids.push_back(token_id);
+            past_key_values = std::move(output.past_key_values);
+            std::cout << "Step " << i << " - Token ID: " << token_id << "\n";
             if (token_id == 2) break;
         }
-        if (token_ids.back() != 2) token_ids.push_back(2);
-
-        std::cout << "Token IDs size: " << token_ids.size() << std::endl;
-        std::cout << "Token IDs: ";
-        for (size_t i = 0; i < token_ids.size(); ++i) {
-            std::cout << token_ids[i] << " ";
-        }
-        std::cout << std::endl;
-
         return decode(token_ids, true);
     }
 
 } // namespace Florence2Processor
+
+int main() {
+    try {
+        std::string gguf_path = "florence2.gguf";
+        std::string tokenizer_path = "tokenizer.json";
+        std::string image_config_path = "preprocessor_config.json";
+        if (!std::filesystem::exists("puma.png")) {
+            std::cerr << "puma.png not found in current directory\n";
+            return 1;
+        }
+        Florence2Processor::Florence2Processor processor(gguf_path, tokenizer_path, image_config_path);
+        cv::Mat image = cv::imread("puma.png");
+        if (image.empty()) {
+            std::cerr << "Failed to load puma.png—check file integrity\n";
+            return 1;
+        }
+        std::string caption = processor.generate("<CAPTION>", image, 5);
+        std::cout << "Caption: " << caption << "\n";
+    } catch (const std::exception& e) {
+        std::cerr << "Exception: " << e.what() << "\n";
+        return 1;
+    }
+    return 0;
+}

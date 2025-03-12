@@ -7,3 +7,5 @@ timm
 einops
 onnx
 onnxruntime
+onnxscript
+accelerate>=0.26.0

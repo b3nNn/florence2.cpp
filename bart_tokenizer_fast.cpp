@@ -6,16 +6,12 @@
 
 BartTokenizerFast::BartTokenizerFast(const std::string& config_path)
         : tokenizer_(config_path) {
-    // Initialize BART-specific special tokens (these are the defaults for facebook/bart-base)
-    // These IDs are typically defined in the tokenizer configuration, but we hardcode them for clarity
-    // In a real implementation, you might want to load these from a config file (e.g., tokenizer.json)
     bos_token_id_ = 0;   // <s>
     eos_token_id_ = 2;   // </s>
     pad_token_id_ = 1;   // <pad>
     unk_token_id_ = 3;   // <unk>
     mask_token_id_ = 50264; // <mask>
 
-    // Add special tokens to the map
     add_special_token("<s>", bos_token_id_);
     add_special_token("</s>", eos_token_id_);
     add_special_token("<pad>", pad_token_id_);
@@ -36,32 +32,43 @@ std::vector<uint32_t> BartTokenizerFast::encode(
 
 std::string BartTokenizerFast::decode(const std::vector<uint32_t>& ids, bool skip_special_tokens) {
     if (!skip_special_tokens) {
-        // If not skipping special tokens, just use the underlying tokenizer's decode
         return tokenizer_.decode(ids, false);
     }
-
-    // Filter out special tokens
     std::vector<uint32_t> filtered_ids;
     for (uint32_t id : ids) {
         if (!is_special_token(id)) {
             filtered_ids.push_back(id);
         }
     }
-
-    // Decode the filtered IDs
     return tokenizer_.decode(filtered_ids, false);
 }
 
+void BartTokenizerFast::add_special_tokens(const std::vector<std::string>& tokens) {
+    // Convert std::vector<std::string> to char* array
+    std::vector<const char*> c_tokens;
+    c_tokens.reserve(tokens.size());
+    for (const auto& token : tokens) {
+        c_tokens.push_back(token.c_str());
+    }
+
+    // Add tokens to underlying tokenizer
+    tokenizer_add_special_tokens(tokenizer_.get_raw_tokenizer(), c_tokens.data(), c_tokens.size());
+
+    // Update special tokens map
+    size_t vocab_size = get_vocab_size();
+    for (size_t i = 0; i < tokens.size(); ++i) {
+        uint32_t id = vocab_size - tokens.size() + i;  // New IDs at end
+        special_tokens_[tokens[i]] = id;
+        special_token_ids_.insert(id);
+    }
+}
+
 size_t BartTokenizerFast::get_vocab_size() const {
-    // Note: Your wrapper doesn't expose vocab size directly, so this is a placeholder
-    // In a real implementation, you might need to extend your wrapper to expose this
-    throw std::runtime_error("get_vocab_size not implemented in wrapper");
-    return 0;
+    return tokenizer_get_vocab_size(tokenizer_.get_raw_tokenizer());
 }
 
 void BartTokenizerFast::add_special_token(const std::string& token, uint32_t id) {
-    special_tokens_[token] = id;
-    special_token_ids_.insert(id);
+    tokenizer_.add_special_token(token);
 }
 
 uint32_t BartTokenizerFast::get_special_token_id(const std::string& token) const {
@@ -73,9 +80,6 @@ uint32_t BartTokenizerFast::get_special_token_id(const std::string& token) const
 }
 
 std::string BartTokenizerFast::preprocess(const std::string& text) const {
-    // Basic pre-processing: handle whitespace, etc.
-    // Note: The Hugging Face tokenizers library handles most pre-processing internally,
-    // so this is minimal. You might need to add more depending on your use case.
     std::stringstream ss;
     bool first = true;
     for (char c : text) {
@@ -94,20 +98,16 @@ std::vector<uint32_t> BartTokenizerFast::postprocess(const std::vector<uint32_t>
     if (!add_special_tokens) {
         return ids;
     }
-
-    // Add BART-specific special tokens: <s> at the start, </s> at the end
     std::vector<uint32_t> processed_ids;
-    processed_ids.push_back(bos_token_id_); // Add <s>
-    processed_ids.insert(processed_ids.end(), ids.begin(), ids.end()); // Add original IDs
-    processed_ids.push_back(eos_token_id_); // Add </s>
+    processed_ids.push_back(bos_token_id_);
+    processed_ids.insert(processed_ids.end(), ids.begin(), ids.end());
+    processed_ids.push_back(eos_token_id_);
     return processed_ids;
 }
 
 bool BartTokenizerFast::is_special_token(uint32_t id) const {
     return special_token_ids_.find(id) != special_token_ids_.end();
 }
-
-//std::vector <std::string, uint32_t>
 
 std::vector<std::pair<std::string, uint32_t>> BartTokenizerFast::get_special_tokens() const {
     char** tokens;

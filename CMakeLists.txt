@@ -11,6 +11,11 @@ set(ONNXRUNTIME_ROOT $ENV{ONNXRUNTIME_ROOT})
 include_directories(${ONNXRUNTIME_ROOT}/include)
 link_directories(${ONNXRUNTIME_LIB}/lib)
 
+# GGML library (unused in Florence-2, kept for completeness)
+set(GGML_LIB_DIR "${CMAKE_SOURCE_DIR}/llama.cpp/build/ggml/src/Release")
+set(GGML_DLL_DIR "${CMAKE_SOURCE_DIR}/llama.cpp/build/bin/Release")
+set(GGML_DLL_NAME "ggml")
+
 # Find libprotobuf.lib
 find_library(PROTOBUF_LIB
         NAMES libprotobuf protobuf
@@ -25,25 +30,37 @@ message(STATUS "Found libprotobuf.lib at: ${PROTOBUF_LIB}")
 # Torch
 set(Torch_DIR $ENV{Torch_DIR})
 set(Torch_LIB $ENV{Torch_LIB})
-include_directories("${Torch_DIR}/include" "${Torch_DIR}/include/torch/csrc/api/include")
+include_directories("${Torch_DIR}/include" "${Torch_DIR}/include/torch/csrc/api/include" "${CMAKE_SOURCE_DIR}/llama.cpp/ggml/include")
 
 # OpenCV
 find_package(OpenCV REQUIRED)
 
 # Executable
-add_executable(bart-cpp
-        test_florence2_onnx.cpp
+add_executable(bart-cpp # test_florence2_onnx.cpp
+#        test_florence2_onnx.cpp
         bart_tokenizer_fast.cpp
         hf_tokenizer/hf_tokenizers.cpp
         clip_image_processor.cpp
-        florence2_processor.cpp
-        )
+        #        ggml_florence2.cpp
+        florence2_processor.cpp)
 target_include_directories(bart-cpp PRIVATE
         ${CMAKE_SOURCE_DIR}/hf_tokenizer
         ${CMAKE_SOURCE_DIR}
         ${OpenCV_INCLUDE_DIRS}
         )
-set_property(TARGET bart-cpp PROPERTY CXX_STANDARD 17)
+set_property(TARGET bart-cpp PROPERTY CXX_STANDARD 20)
+
+# Ensure the Rust library is built before linking (optional, if Rust is part of the same build)
+# If the Rust library is built separately, ensure cargo build --release has been run
+find_program(CARGO cargo)
+if (CARGO)
+    add_custom_target(rust_library
+            COMMAND ${CARGO} build --release
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            COMMENT "Building Rust library"
+            )
+    add_dependencies(bart-cpp rust_library)
+endif()
 
 # Link libraries
 if(WIN32)
@@ -54,6 +71,8 @@ if(WIN32)
             "${Torch_LIB}/c10.lib"
             "${ONNXRUNTIME_ROOT}/lib/onnxruntime.lib"
             "${ONNXRUNTIME_ROOT}/lib/onnxruntime_providers_shared.lib"
+            "${GGML_LIB_DIR}/${GGML_DLL_NAME}-base.lib"
+            "${GGML_LIB_DIR}/${GGML_DLL_NAME}-cpu.lib"
             ${PROTOBUF_LIB}
             ${ABSL_LIBS}  # Link all found Abseil libraries
             ${OpenCV_LIBS}
@@ -79,6 +98,10 @@ if(WIN32)
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "${ONNXRUNTIME_ROOT}/lib/onnxruntime.dll" $<TARGET_FILE_DIR:bart-cpp>)
     add_custom_command(TARGET bart-cpp POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "${ONNXRUNTIME_ROOT}/lib/onnxruntime_providers_shared.dll" $<TARGET_FILE_DIR:bart-cpp>)
+    add_custom_command(TARGET bart-cpp POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GGML_DLL_DIR}/${GGML_DLL_NAME}-base.dll" $<TARGET_FILE_DIR:bart-cpp>)
+    add_custom_command(TARGET bart-cpp POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GGML_DLL_DIR}/${GGML_DLL_NAME}-cpu.dll" $<TARGET_FILE_DIR:bart-cpp>)
 endif()
 
 add_custom_command(TARGET bart-cpp POST_BUILD
@@ -88,4 +111,4 @@ add_custom_command(TARGET bart-cpp POST_BUILD
 add_custom_command(TARGET bart-cpp POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/puma.png" $<TARGET_FILE_DIR:bart-cpp>)
 add_custom_command(TARGET bart-cpp POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/florence2.onnx" $<TARGET_FILE_DIR:bart-cpp>)
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/florence2.gguf" $<TARGET_FILE_DIR:bart-cpp>)
