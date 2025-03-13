@@ -5,11 +5,37 @@ import numpy as np
 import os
 import logging
 import argparse
+import json
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)  # Adjusted to INFO for cleaner output
 logger = logging.getLogger(__name__)
 
 CUSTOM_ARCH_FLORENCE2 = "florence2"
+
+def validate_mapping(gguf_file, mapping_file):
+    """Validate that all tensors in the mapping exist in the GGUF file with correct names."""
+    gguf_reader = gguf.GGUFReader(gguf_file)
+    gguf_tensors = {tensor.name for tensor in gguf_reader.tensors}
+
+    with open(mapping_file, 'r') as f:
+        tensor_mapping = json.load(f)
+
+    mapped_tensors = set(tensor_mapping.values())
+
+    # Check for missing tensors in GGUF
+    missing_in_gguf = mapped_tensors - gguf_tensors
+    if missing_in_gguf:
+        logger.error(f"Validation failed: Tensors in mapping not found in GGUF: {missing_in_gguf}")
+        return False
+
+    # Check for unmapped tensors in GGUF (optional, but useful for completeness)
+    unmapped_in_gguf = gguf_tensors - mapped_tensors
+    if unmapped_in_gguf:
+        logger.error(f"Validation failed: Tensors in GGUF not in mapping: {unmapped_in_gguf}")
+        return False
+
+    logger.info("Tensor mapping validation passed")
+    return True
 
 def main():
     parser = argparse.ArgumentParser()
@@ -23,6 +49,7 @@ def main():
         exit(1)
 
     outfile = args.outfile or "florence2_large_ft.gguf"
+    mapping_file = "tensors_mapping.json"
 
     # Load model
     model = AutoModelForCausalLM.from_pretrained(
@@ -46,11 +73,10 @@ def main():
     gguf_writer.add_uint32("eos_id", model.config.eos_token_id)
     gguf_writer.add_uint32("pad_id", model.config.pad_token_id)
 
-    # Use module-level constant if available, otherwise hardcode the key
     try:
-        gguf_writer.add_uint32("general.alignment", gguf.GGUF_DEFAULT_ALIGNMENT)  # Try module constant
+        gguf_writer.add_uint32("general.alignment", gguf.GGUF_DEFAULT_ALIGNMENT)
     except AttributeError:
-        gguf_writer.add_uint32("general.alignment", 32)  # Fallback to hardcoded key
+        gguf_writer.add_uint32("general.alignment", 32)
 
     text_config = model.config.text_config
     gguf_writer.add_uint32("t_vocab_size", text_config.vocab_size)
@@ -85,7 +111,7 @@ def main():
         "language_model.model.encoder.embed_tokens.weight": "t_enc_embd_w",
         "language_model.model.encoder.embed_positions.weight": "t_enc_pos_w",
         "language_model.model.encoder.layernorm_embedding.weight": "t_enc_lnorm_w",
-        "language_model.model.encoder.layernorm_embedding.bias": "t_enc_lnorm_b",
+        "language_model.model.encoder.layernorm_embedding.bias": "t_enc_lnorm_b"
     }
     for i in range(text_config.decoder_layers):
         weight_map_language[f"language_model.model.decoder.layers.{i}.self_attn.q_proj.weight"] = f"t{i}a_qw"
@@ -118,7 +144,7 @@ def main():
     for i in range(text_config.encoder_layers):
         weight_map_language[f"language_model.model.encoder.layers.{i}.self_attn.q_proj.weight"] = f"te{i}a_qw"
         weight_map_language[f"language_model.model.encoder.layers.{i}.self_attn.k_proj.weight"] = f"te{i}a_kw"
-        weight_map_language[f"language_model.model.decoder.layers.{i}.self_attn.v_proj.weight"] = f"t{i}a_vw"
+        weight_map_language[f"language_model.model.encoder.layers.{i}.self_attn.v_proj.weight"] = f"te{i}a_vw"
         weight_map_language[f"language_model.model.encoder.layers.{i}.self_attn.out_proj.weight"] = f"te{i}a_ow"
         weight_map_language[f"language_model.model.encoder.layers.{i}.fc1.weight"] = f"te{i}f_upw"
         weight_map_language[f"language_model.model.encoder.layers.{i}.fc2.weight"] = f"te{i}f_dnw"
@@ -155,7 +181,7 @@ def main():
         "vision_tower.convs.3.proj.weight": "v_c3w",
         "vision_tower.convs.3.proj.bias": "v_c3b",
         "vision_tower.convs.3.norm.weight": "v_n3w",
-        "vision_tower.convs.3.norm.bias": "v_n3b",
+        "vision_tower.convs.3.norm.bias": "v_n3b"
     }
     block_idx = 0
     for stage, depth in enumerate(vision_config.depths):
@@ -196,13 +222,24 @@ def main():
             weight_map_vision[f"{prefix}.channel_block.ffn.fn.net.fc2.bias"] = f"{gguf_prefix}c_f2b"
             block_idx += 1
 
+    # Combine mappings into a single dictionary
+    tensor_mapping = {}
+    tensor_mapping.update(weight_map_language)
+    tensor_mapping.update(weight_map_vision)
+
+    # Export tensor mapping to JSON
+    with open(mapping_file, 'w') as f:
+        json.dump(tensor_mapping, f, indent=4)
+    logger.info(f"Tensor mapping exported to {mapping_file}")
+
+    # Process and write tensors
     total_bytes = 0
     tensor_count = 0
     for name, tensor in state_dict.items():
-        gguf_name = weight_map_language.get(name) or weight_map_vision.get(name)
+        gguf_name = tensor_mapping.get(name)
         if not gguf_name:
-            logger.warning(f"Skipping unmapped weight: {name}, shape: {tensor.shape}")
-            continue
+            logger.error(f"Critical error: Tensor {name} (shape: {tensor.shape}) not mapped in tensor_mapping")
+            exit(1)
 
         if len(gguf_name) >= 64:
             logger.error(f"Tensor name {gguf_name} too long ({len(gguf_name)})")
@@ -217,7 +254,6 @@ def main():
         total_bytes += byte_size
         tensor_count += 1
 
-        logger.debug(f"Adding tensor: {gguf_name}, shape: {data.shape}, dtype: {data.dtype}, bytes: {byte_size}")
         if gguf_name in ["v_pjw", "t_out_w"]:
             logger.info(f"{gguf_name} first 10 values: {data.flatten()[:10]}")
             logger.info(f"{gguf_name} last 10 values: {data.flatten()[-10:]}")
@@ -232,6 +268,11 @@ def main():
 
     file_size = os.path.getsize(outfile)
     logger.info(f"Converted model to GGUF: {outfile}, File size: {file_size} bytes")
+
+    # Validation step
+    if not validate_mapping(outfile, mapping_file):
+        logger.error(f"Validation of {mapping_file} against {outfile} failed")
+        exit(1)
 
 if __name__ == "__main__":
     main()
