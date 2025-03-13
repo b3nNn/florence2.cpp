@@ -42,7 +42,6 @@ namespace Florence2Processor {
     }
 
     void Florence2Processor::initialize_ggml_context(const std::string& gguf_path) {
-        // GGUF context
         size_t gguf_tensor_size = 1831148768ULL;
         ggml_init_params gguf_params = { .mem_size = gguf_tensor_size + 1024 * 1024, .mem_buffer = NULL };
         gguf_ctx = ggml_init(gguf_params);
@@ -76,7 +75,6 @@ namespace Florence2Processor {
         gguf_free(temp_gguf_ctx);
         gguf_free(file_ctx);
 
-        // Main context
         size_t runtime_size = 0;
         runtime_size += 768 * 768 * 3 * 1 * sizeof(ggml_fp16_t) + GGML_TENSOR_SIZE;      // pixel_values_prealloc
         runtime_size += 192 * 192 * 256 * 1 * sizeof(ggml_fp16_t) + GGML_TENSOR_SIZE;    // conv0_output
@@ -101,6 +99,7 @@ namespace Florence2Processor {
         runtime_size += 1 * 1 * 1024 * 1 * sizeof(ggml_fp16_t) + GGML_TENSOR_SIZE;       // v_c2b
         runtime_size += 1024 * 2048 * sizeof(ggml_fp16_t) + GGML_TENSOR_SIZE;            // v_pjw
         runtime_size += 51289 * 1024 * sizeof(ggml_fp16_t) + GGML_TENSOR_SIZE;           // t_out_w
+        runtime_size += 51289 * 1024 * sizeof(ggml_fp16_t) + GGML_TENSOR_SIZE;           // t_wte (embedding)
 
         std::cout << "Runtime size: " << runtime_size << " bytes (~" << runtime_size / (1024.0 * 1024 * 1024) << " GB)\n";
 
@@ -122,8 +121,8 @@ namespace Florence2Processor {
         conv2_output = ggml_new_tensor_4d(ctx, GGML_TYPE_F16, 48, 48, 1024, 1);
         conv2_bias = ggml_new_tensor_4d(ctx, GGML_TYPE_F16, 48, 48, 1024, 1);
         norm2_prealloc = ggml_new_tensor_4d(ctx, GGML_TYPE_F16, 48, 48, 1024, 1);
-        input_ids_tensor_prealloc = ggml_new_tensor_2d(ctx, GGML_TYPE_F16, 256, 1);
-        decoder_input_ids_tensor_prealloc = ggml_new_tensor_2d(ctx, GGML_TYPE_F16, 5, 1);
+        input_ids_tensor_prealloc = ggml_new_tensor_2d(ctx, GGML_TYPE_I64, 256, 1); // Adjusted to I64 for input_ids
+        decoder_input_ids_tensor_prealloc = ggml_new_tensor_2d(ctx, GGML_TYPE_I64, 5, 1);
 
         graph = ggml_new_graph(ctx);
         if (!graph) throw std::runtime_error("Failed to initialize computation graph");
@@ -157,98 +156,6 @@ namespace Florence2Processor {
         return gguf_get_val_u32(ctx, idx);
     }
 
-    // Manual matrix multiplication helper
-    ggml_tensor* Florence2Processor::manual_mul_mat(ggml_context* ctx, ggml_tensor* a, ggml_tensor* b) {
-        int rows_a = a->ne[1]; // Rows of a
-        int cols_a = a->ne[0]; // Columns of a
-        int rows_b = b->ne[1]; // Rows of b
-        int cols_b = b->ne[0]; // Columns of b
-
-        if (cols_a != rows_b) {
-            std::cerr << "Matrix multiplication mismatch: " << cols_a << " != " << rows_b << "\n";
-            return nullptr;
-        }
-
-        ggml_tensor* result = ggml_new_tensor_2d(ctx, GGML_TYPE_F16, cols_b, rows_a); // [rows_a, cols_b]
-        ggml_fp16_t* a_data = (ggml_fp16_t*)a->data;
-        ggml_fp16_t* b_data = (ggml_fp16_t*)b->data;
-        ggml_fp16_t* result_data = (ggml_fp16_t*)result->data;
-
-        for (int i = 0; i < rows_a; ++i) { // Rows of result
-            for (int j = 0; j < cols_b; ++j) { // Columns of result
-                float sum = 0.0f;
-                for (int k = 0; k < cols_a; ++k) { // Columns of a, rows of b
-                    sum += ggml_fp16_to_fp32(a_data[i * cols_a + k]) * ggml_fp16_to_fp32(b_data[k * cols_b + j]);
-                }
-                result_data[i * cols_b + j] = ggml_fp32_to_fp16(sum);
-            }
-        }
-
-        return result;
-    }
-
-    ggml_tensor* manual_conv_2d(ggml_context* ctx, ggml_tensor* input, ggml_tensor* weight,
-                                int s_w, int s_h, int p_w, int p_h, int d_w, int d_h) {
-        int in_w = input->ne[0], in_h = input->ne[1], in_c = input->ne[2];
-        int k_w = weight->ne[0], k_h = weight->ne[1], k_in_c = weight->ne[2], k_out_c = weight->ne[3];
-
-        int out_w = (in_w + 2 * p_w - k_w) / s_w + 1; // 14
-        int out_h = (in_h + 2 * p_h - k_h) / s_h + 1; // 14
-        int out_c = k_out_c; // 4
-
-        ggml_tensor* output = ggml_new_tensor_4d(ctx, GGML_TYPE_F16, out_w, out_h, out_c, 1);
-        ggml_fp16_t* in_data = (ggml_fp16_t*)input->data;
-        ggml_fp16_t* w_data = (ggml_fp16_t*)weight->data;
-        ggml_fp16_t* out_data = (ggml_fp16_t*)output->data;
-
-        for (int oy = 0; oy < out_h; ++oy) {
-            for (int ox = 0; ox < out_w; ++ox) {
-                for (int oc = 0; oc < out_c; ++oc) {
-                    float sum = 0.0f;
-                    for (int ky = 0; ky < k_h; ++ky) {
-                        int iy = oy * s_h + ky - p_h;
-                        if (iy < 0 || iy >= in_h) continue;
-                        for (int kx = 0; kx < k_w; ++kx) {
-                            int ix = ox * s_w + kx - p_w;
-                            if (ix < 0 || ix >= in_w) continue;
-                            for (int ic = 0; ic < in_c; ++ic) {
-                                float in_val = ggml_fp16_to_fp32(in_data[iy * in_w * in_c + ix * in_c + ic]);
-                                float w_val = ggml_fp16_to_fp32(w_data[ky * k_w * k_in_c * k_out_c + kx * k_in_c * k_out_c + ic * k_out_c + oc]);
-                                sum += in_val * w_val;
-                            }
-                        }
-                    }
-                    int idx = oy * out_w * out_c + ox * out_c + oc;
-                    out_data[idx] = ggml_fp32_to_fp16(sum);
-                }
-            }
-        }
-
-        return output;
-    }
-
-    ggml_tensor* manual_add(ggml_context* ctx, ggml_tensor* a, ggml_tensor* b) {
-        int w = a->ne[0], h = a->ne[1], c = a->ne[2], n = a->ne[3];
-        ggml_tensor* result = ggml_new_tensor_4d(ctx, GGML_TYPE_F16, w, h, c, n);
-        ggml_fp16_t* a_data = (ggml_fp16_t*)a->data;
-        ggml_fp16_t* b_data = (ggml_fp16_t*)b->data;
-        ggml_fp16_t* r_data = (ggml_fp16_t*)result->data;
-
-        for (int i = 0; i < h; ++i) {
-            for (int j = 0; j < w; ++j) {
-                for (int k = 0; k < c; ++k) {
-                    int idx = i * w * c + j * c + k;
-                    float a_val = ggml_fp16_to_fp32(a_data[idx]);
-                    float b_val = ggml_fp16_to_fp32(b_data[k]);
-                    r_data[idx] = ggml_fp32_to_fp16(a_val + b_val);
-                }
-            }
-        }
-
-        return result;
-    }
-
-    // Extracted image processing logic
     ggml_tensor* Florence2Processor::process_image(const cv::Mat& image) {
         torch::Tensor image_tensor = image_processor.Preprocess(image);
         if (image_tensor.dim() != 4 || image_tensor.size(0) != 1 || image_tensor.size(1) != 3 ||
@@ -279,42 +186,57 @@ namespace Florence2Processor {
         ggml_tensor* v_c2b = load_tensor("v_c2b");
         ggml_tensor* v_pjw = load_tensor("v_pjw");
 
-        ggml_tensor* conv0 = manual_conv_2d(ctx, pixel_values_prealloc, v_c0w, 4, 4, 3, 3, 1, 1);
+        // Reshape biases
+        v_c0b = ggml_reshape_4d(ctx, v_c0b, 1, 1, 256, 1);
+        v_c1b = ggml_reshape_4d(ctx, v_c1b, 1, 1, 512, 1);
+        v_c2b = ggml_reshape_4d(ctx, v_c2b, 1, 1, 1024, 1);
+
+        ggml_tensor* conv0 = ggml_conv_2d(ctx, v_c0w, pixel_values_prealloc, 4, 4, 3, 3, 1, 1);
+        ggml_build_forward_expand(graph, conv0);
         std::cout << "conv0 shape: [" << conv0->ne[0] << ", " << conv0->ne[1] << ", "
                   << conv0->ne[2] << ", " << conv0->ne[3] << "]\n";
-        ggml_tensor* conv0_with_bias = manual_add(ctx, conv0, v_c0b);
+        ggml_tensor* conv0_with_bias = ggml_add(ctx, conv0, v_c0b);
+        ggml_build_forward_expand(graph, conv0_with_bias);
         ggml_tensor* norm0 = ggml_group_norm(ctx, conv0_with_bias, 256, 1e-5f);
+        ggml_build_forward_expand(graph, norm0);
 
-        ggml_tensor* conv1 = manual_conv_2d(ctx, norm0, v_c1w, 2, 2, 1, 1, 1, 1);
+        ggml_tensor* conv1 = ggml_conv_2d(ctx, v_c1w, norm0, 2, 2, 1, 1, 1, 1);
+        ggml_build_forward_expand(graph, conv1);
         std::cout << "conv1 shape: [" << conv1->ne[0] << ", " << conv1->ne[1] << ", "
                   << conv1->ne[2] << ", " << conv1->ne[3] << "]\n";
-        ggml_tensor* conv1_with_bias = manual_add(ctx, conv1, v_c1b);
+        ggml_tensor* conv1_with_bias = ggml_add(ctx, conv1, v_c1b);
+        ggml_build_forward_expand(graph, conv1_with_bias);
         ggml_tensor* norm1 = ggml_group_norm(ctx, conv1_with_bias, 512, 1e-5f);
+        ggml_build_forward_expand(graph, norm1);
 
-        ggml_tensor* conv2 = manual_conv_2d(ctx, norm1, v_c2w, 2, 2, 1, 1, 1, 1);
+        ggml_tensor* conv2 = ggml_conv_2d(ctx, v_c2w, norm1, 2, 2, 1, 1, 1, 1);
+        ggml_build_forward_expand(graph, conv2);
         std::cout << "conv2 shape: [" << conv2->ne[0] << ", " << conv2->ne[1] << ", "
                   << conv2->ne[2] << ", " << conv2->ne[3] << "]\n";
-        ggml_tensor* conv2_with_bias = manual_add(ctx, conv2, v_c2b);
+        ggml_tensor* conv2_with_bias = ggml_add(ctx, conv2, v_c2b);
+        ggml_build_forward_expand(graph, conv2_with_bias);
         ggml_tensor* norm2 = ggml_group_norm(ctx, conv2_with_bias, 1024, 1e-5f);
+        ggml_build_forward_expand(graph, norm2);
         std::cout << "norm2 shape: [" << norm2->ne[0] << ", " << norm2->ne[1] << ", "
                   << norm2->ne[2] << ", " << norm2->ne[3] << "]\n";
 
         ggml_tensor* norm2_reshaped = ggml_reshape_2d(ctx, norm2, 48 * 48, 1024);
+        ggml_build_forward_expand(graph, norm2_reshaped);
         std::cout << "norm2_reshaped shape: [" << norm2_reshaped->ne[0] << ", " << norm2_reshaped->ne[1] << "]\n";
-        ggml_tensor* norm2_pooled_temp = ggml_mean(ctx, norm2_reshaped);
-        std::cout << "norm2_pooled_temp shape: [" << norm2_pooled_temp->ne[0] << ", " << norm2_pooled_temp->ne[1] << "]\n";
-
-        ggml_tensor* temp_weight = ggml_new_tensor_2d(ctx, GGML_TYPE_F16, 1024, 2048);
-        for (int i = 0; i < 1024 * 2048; ++i) {
-            ((ggml_fp16_t*)temp_weight->data)[i] = ggml_fp32_to_fp16(i % 1024 == i / 2048 ? 1.0f : 0.0f);
-        }
-        ggml_tensor* norm2_transformed = manual_mul_mat(ctx, temp_weight, ggml_transpose(ctx, norm2_pooled_temp));
-        std::cout << "norm2_transformed shape: [" << norm2_transformed->ne[0] << ", " << norm2_transformed->ne[1] << "]\n";
-        ggml_tensor* norm2_pooled = ggml_new_tensor_2d(ctx, GGML_TYPE_F16, 2048, 1);
-        ggml_cpy(ctx, norm2_transformed, norm2_pooled);
+        ggml_tensor* norm2_pooled = ggml_mean(ctx, norm2_reshaped); // [1, 1024]
+        ggml_build_forward_expand(graph, norm2_pooled);
         std::cout << "norm2_pooled shape: [" << norm2_pooled->ne[0] << ", " << norm2_pooled->ne[1] << "]\n";
 
-        ggml_tensor* vision_output = manual_mul_mat(ctx, v_pjw, norm2_pooled);
+        // Reshape norm2_pooled to [1024, 1] for ggml_mul_mat
+        ggml_tensor* norm2_pooled_reshaped = ggml_reshape_2d(ctx, norm2_pooled, 1024, 1);
+        ggml_build_forward_expand(graph, norm2_pooled_reshaped);
+        std::cout << "norm2_pooled_reshaped shape: [" << norm2_pooled_reshaped->ne[0] << ", " << norm2_pooled_reshaped->ne[1] << "]\n";
+
+        ggml_tensor* vision_output = ggml_mul_mat(ctx, v_pjw, norm2_pooled_reshaped); // [1024, 1024] * [1024, 1] = [1024, 1]
+        if (!vision_output) {
+            throw std::runtime_error("Vision output GGML matrix multiplication failed");
+        }
+        ggml_build_forward_expand(graph, vision_output);
         std::cout << "vision_output shape: [" << vision_output->ne[0] << ", " << vision_output->ne[1] << "]\n";
 
         return vision_output;
@@ -331,27 +253,36 @@ namespace Florence2Processor {
         ggml_graph_clear(graph);
         reset_graph_allocator();
 
-        // Process image
-        ggml_tensor* vision_output = process_image(image);
-        ggml_build_forward_expand(graph, vision_output);
+        ggml_tensor* vision_output = process_image(image); // [1, 1024]
 
-        // Process text
+        // Embed text input_ids
         int64_t* input_ids_data = static_cast<int64_t*>(ggml_get_data(input_ids_tensor_prealloc));
         std::copy(input_ids.begin(), input_ids.end(), input_ids_data);
+        ggml_tensor* t_wte = load_tensor("t_wte"); // [51289, 1024] embedding matrix
+        ggml_tensor* text_embeddings = ggml_mul_mat(ctx, t_wte, input_ids_tensor_prealloc); // [51289, 1024] * [256, 1] = [256, 1024]
+        ggml_build_forward_expand(graph, text_embeddings);
+        std::cout << "text_embeddings shape: [" << text_embeddings->ne[0] << ", " << text_embeddings->ne[1] << "]\n";
 
-        ggml_tensor* encoder_output = input_ids_tensor_prealloc; // [256, 1]
+        // Concatenate vision and text embeddings
+        ggml_tensor* encoder_input = ggml_concat(ctx, vision_output, text_embeddings, 0); // [1+256, 1024] = [257, 1024]
+        ggml_build_forward_expand(graph, encoder_input);
+        std::cout << "encoder_input shape: [" << encoder_input->ne[0] << ", " << encoder_input->ne[1] << "]\n";
+
+        // Placeholder for decoder (simplified to logits generation)
         ggml_tensor* t_out_w = load_tensor("t_out_w"); // [1024, 51289]
-        ggml_tensor* logits = manual_mul_mat(ctx, t_out_w, encoder_output); // [51289, 1]
-        std::cout << "logits shape: [" << logits->ne[0] << ", " << logits->ne[1] << "]\n";
+        ggml_tensor* logits = ggml_mul_mat(ctx, t_out_w, encoder_input); // [1024, 51289] * [257, 1024] = [257, 51289]
         ggml_build_forward_expand(graph, logits);
+        std::cout << "logits shape: [" << logits->ne[0] << ", " << logits->ne[1] << "]\n";
 
         if (!ggml_gallocr_alloc_graph(galloc, graph)) throw std::runtime_error("Failed to allocate graph memory");
         ggml_graph_compute(graph, NULL);
 
         ModelOutput output;
         output.logits.resize(vocab_size);
-        float* logits_data = static_cast<float*>(ggml_get_data(logits));
-        std::copy(logits_data, logits_data + vocab_size, output.logits.begin());
+        ggml_fp16_t* logits_data = static_cast<ggml_fp16_t*>(ggml_get_data(logits));
+        for (size_t i = 0; i < vocab_size; ++i) {
+            output.logits[i] = ggml_fp16_to_fp32(logits_data[i]); // Take first token’s logits for simplicity
+        }
         output.past_key_values.resize(t_dec_layers);
 
         size_t used_mem = ggml_used_mem(ctx);
