@@ -35,14 +35,19 @@ include_directories("${Torch_DIR}/include" "${Torch_DIR}/include/torch/csrc/api/
 # OpenCV
 find_package(OpenCV REQUIRED)
 
+# Tools
+add_executable(gguf-tool gguf_tool.cpp)
+target_include_directories(gguf-tool PRIVATE
+        ${CMAKE_SOURCE_DIR}/hf_tokenizer
+        ${CMAKE_SOURCE_DIR}
+        ${OpenCV_INCLUDE_DIRS}
+        )
+set_property(TARGET gguf-tool PROPERTY CXX_STANDARD 20)
+
 # Executable
-add_executable(bart-cpp # test_florence2_onnx.cpp
-#        test_florence2_onnx.cpp
-        bart_tokenizer_fast.cpp
+add_executable(bart-cpp bart_tokenizer_fast.cpp
         hf_tokenizer/hf_tokenizers.cpp
         clip_image_processor.cpp
-        #        ggml_florence2.cpp
-        test_florence2.cpp
         florence2_processor.cpp)
 target_include_directories(bart-cpp PRIVATE
         ${CMAKE_SOURCE_DIR}/hf_tokenizer
@@ -66,6 +71,20 @@ endif()
 # Link libraries
 if(WIN32)
     target_link_libraries(bart-cpp PRIVATE
+            "${RUST_LIB_DIR}/${RUST_LIB_NAME}.dll.lib"
+            "${Torch_LIB}/torch.lib"
+            "${Torch_LIB}/torch_cpu.lib"
+            "${Torch_LIB}/c10.lib"
+            "${ONNXRUNTIME_ROOT}/lib/onnxruntime.lib"
+            "${ONNXRUNTIME_ROOT}/lib/onnxruntime_providers_shared.lib"
+            "${GGML_LIB_DIR}/${GGML_DLL_NAME}-base.lib"
+            "${GGML_LIB_DIR}/${GGML_DLL_NAME}-cpu.lib"
+            ${PROTOBUF_LIB}
+            ${ABSL_LIBS}  # Link all found Abseil libraries
+            ${OpenCV_LIBS}
+            ws2_32 userenv bcrypt
+            )
+    target_link_libraries(gguf-tool PRIVATE
             "${RUST_LIB_DIR}/${RUST_LIB_NAME}.dll.lib"
             "${Torch_LIB}/torch.lib"
             "${Torch_LIB}/torch_cpu.lib"
@@ -113,3 +132,7 @@ add_custom_command(TARGET bart-cpp POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/puma.png" $<TARGET_FILE_DIR:bart-cpp>)
 add_custom_command(TARGET bart-cpp POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/florence2.gguf" $<TARGET_FILE_DIR:bart-cpp>)
+add_custom_command(TARGET bart-cpp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/tensors_mapping.json" $<TARGET_FILE_DIR:bart-cpp>)
+add_custom_command(TARGET gguf-tool POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/tensors_mapping.json" $<TARGET_FILE_DIR:gguf-tool>)
