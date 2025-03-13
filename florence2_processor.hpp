@@ -25,7 +25,7 @@ namespace Florence2Processor {
 
     class Florence2Processor {
     public:
-        Florence2Processor(const std::string& gguf_path, const std::string& tokenizer_json_path, const std::string& image_config_path);
+        Florence2Processor(const std::string& gguf_path, const std::string& tokenizer_json_path, const std::string& image_config_path, const std::string& mapping_path);
         ~Florence2Processor();
 
         ModelOutput process(const std::string& text, const cv::Mat& image, const std::vector<int64_t>& decoder_input_ids,
@@ -51,6 +51,8 @@ namespace Florence2Processor {
         ggml_tensor* input_ids_tensor_prealloc;
         ggml_tensor* decoder_input_ids_tensor_prealloc;
 
+        std::map<std::string, std::string> tensor_mapping;
+        std::map<std::string, std::string> tensor_full_names;
         std::unordered_map<std::string, ggml_tensor*> tensors;
         BartTokenizerFast tokenizer;
         CLIPImageProcessor image_processor;

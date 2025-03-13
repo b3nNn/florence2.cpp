@@ -48,7 +48,8 @@ set_property(TARGET gguf-tool PROPERTY CXX_STANDARD 20)
 add_executable(bart-cpp bart_tokenizer_fast.cpp
         hf_tokenizer/hf_tokenizers.cpp
         clip_image_processor.cpp
-        florence2_processor.cpp)
+        florence2_processor.cpp
+        test_florence2.cpp)
 target_include_directories(bart-cpp PRIVATE
         ${CMAKE_SOURCE_DIR}/hf_tokenizer
         ${CMAKE_SOURCE_DIR}

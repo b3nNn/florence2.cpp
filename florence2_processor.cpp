@@ -1,6 +1,10 @@
 #include "florence2_processor.hpp"
 #include <filesystem>
 #include <cassert>
+#include <fstream>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 namespace Florence2Processor {
 
@@ -10,7 +14,8 @@ namespace Florence2Processor {
 
     static const int image_seq_length = 833;
 
-    Florence2Processor::Florence2Processor(const std::string& gguf_path, const std::string& tokenizer_json_path, const std::string& image_config_path)
+    Florence2Processor::Florence2Processor(const std::string& gguf_path, const std::string& tokenizer_json_path,
+                                           const std::string& image_config_path, const std::string& mapping_path)
             : ctx(nullptr), gguf_ctx(nullptr), galloc(nullptr), graph(nullptr),
               pixel_values_prealloc(nullptr), conv0_output(nullptr), conv0_bias(nullptr), norm0_prealloc(nullptr),
               conv1_output(nullptr), conv1_bias(nullptr), norm1_prealloc(nullptr),
@@ -20,6 +25,16 @@ namespace Florence2Processor {
         if (!std::filesystem::exists(gguf_path)) throw std::runtime_error("GGUF file not found: " + gguf_path);
         if (!std::filesystem::exists(tokenizer_json_path)) throw std::runtime_error("Tokenizer file not found: " + tokenizer_json_path);
         if (!std::filesystem::exists(image_config_path)) throw std::runtime_error("Image config file not found: " + image_config_path);
+        if (!std::filesystem::exists(mapping_path)) throw std::runtime_error("Tensor mapping file not found: " + mapping_path);
+
+        // Load tensor mapping
+        std::ifstream mapping_file(mapping_path);
+        json tensor_mapping_json;
+        mapping_file >> tensor_mapping_json;
+        for (auto& [pytorch_name, gguf_name] : tensor_mapping_json.items()) {
+            tensor_mapping[pytorch_name] = gguf_name; // Full name to GGUF name
+            tensor_full_names[gguf_name] = pytorch_name; // GGUF name to full name (for reference)
+        }
 
         cv::setNumThreads(0);
         initialize_ggml_context(gguf_path);
@@ -129,10 +144,13 @@ namespace Florence2Processor {
         assert(ggml_gallocr_reserve(galloc, graph) && "Failed to reserve memory for computation graph");
     }
 
-    ggml_tensor* Florence2Processor::load_tensor(const std::string& name) {
-        auto it = tensors.find(name);
-        assert(it != tensors.end() && ("Tensor not found: " + name).c_str());
-        return it->second;
+    ggml_tensor* Florence2Processor::load_tensor(const std::string& full_name) {
+        auto it = tensor_mapping.find(full_name);
+        assert(it != tensor_mapping.end() && ("Full tensor name not found in mapping: " + full_name).c_str());
+        std::string gguf_name = it->second;
+        auto tensor_it = tensors.find(gguf_name);
+        assert(tensor_it != tensors.end() && ("Tensor not found in GGUF: " + gguf_name + " (mapped from " + full_name + ")").c_str());
+        return tensor_it->second;
     }
 
     int Florence2Processor::get_metadata_int(gguf_context* ctx, const std::string& key) {
@@ -142,7 +160,6 @@ namespace Florence2Processor {
         return gguf_get_val_u32(ctx, idx);
     }
 
-    // Preprocess image into GGML tensor
     ggml_tensor* preprocess_image(ggml_context* ctx, ggml_tensor* pixel_values_prealloc, const cv::Mat& image, CLIPImageProcessor& image_processor) {
         torch::Tensor image_tensor = image_processor.Preprocess(image);
         assert(image_tensor.dim() == 4 && image_tensor.size(0) == 1 && image_tensor.size(1) == 3 &&
@@ -162,61 +179,79 @@ namespace Florence2Processor {
         return pixel_values_prealloc;
     }
 
-    // Apply convolutional stages
     ggml_tensor* apply_conv_stages(ggml_context* ctx, ggml_cgraph* graph, ggml_tensor* input,
-                                   ggml_tensor* v_c0w, ggml_tensor* v_c0b,
-                                   ggml_tensor* v_c1w, ggml_tensor* v_c1b,
-                                   ggml_tensor* v_c2w, ggml_tensor* v_c2b) {
-        v_c0b = ggml_reshape_4d(ctx, v_c0b, 1, 1, 256, 1);
-        ggml_tensor* conv0 = ggml_conv_2d(ctx, v_c0w, input, 4, 4, 3, 3, 1, 1);
+                                   ggml_tensor* conv0_weight, ggml_tensor* conv0_bias,
+                                   ggml_tensor* conv1_weight, ggml_tensor* conv1_bias,
+                                   ggml_tensor* conv2_weight, ggml_tensor* conv2_bias,
+                                   ggml_tensor* conv3_weight, ggml_tensor* conv3_bias) {
+        conv0_bias = ggml_reshape_4d(ctx, conv0_bias, 1, 1, 256, 1);
+        ggml_tensor* conv0 = ggml_conv_2d(ctx, conv0_weight, input, 4, 4, 3, 3, 1, 1); // [192, 192, 256, 1]
         ggml_build_forward_expand(graph, conv0);
-        ggml_tensor* conv0_with_bias = ggml_add(ctx, conv0, v_c0b);
+        ggml_tensor* conv0_with_bias = ggml_add(ctx, conv0, conv0_bias);
         ggml_build_forward_expand(graph, conv0_with_bias);
         ggml_tensor* norm0 = ggml_group_norm(ctx, conv0_with_bias, 256, 1e-5f);
         ggml_build_forward_expand(graph, norm0);
 
-        v_c1b = ggml_reshape_4d(ctx, v_c1b, 1, 1, 512, 1);
-        ggml_tensor* conv1 = ggml_conv_2d(ctx, v_c1w, norm0, 2, 2, 1, 1, 1, 1);
+        conv1_bias = ggml_reshape_4d(ctx, conv1_bias, 1, 1, 512, 1);
+        ggml_tensor* conv1 = ggml_conv_2d(ctx, conv1_weight, norm0, 2, 2, 1, 1, 1, 1); // [96, 96, 512, 1]
         ggml_build_forward_expand(graph, conv1);
-        ggml_tensor* conv1_with_bias = ggml_add(ctx, conv1, v_c1b);
+        ggml_tensor* conv1_with_bias = ggml_add(ctx, conv1, conv1_bias);
         ggml_build_forward_expand(graph, conv1_with_bias);
         ggml_tensor* norm1 = ggml_group_norm(ctx, conv1_with_bias, 512, 1e-5f);
         ggml_build_forward_expand(graph, norm1);
 
-        v_c2b = ggml_reshape_4d(ctx, v_c2b, 1, 1, 1024, 1);
-        ggml_tensor* conv2 = ggml_conv_2d(ctx, v_c2w, norm1, 2, 2, 1, 1, 1, 1);
+        conv2_bias = ggml_reshape_4d(ctx, conv2_bias, 1, 1, 1024, 1);
+        ggml_tensor* conv2 = ggml_conv_2d(ctx, conv2_weight, norm1, 2, 2, 1, 1, 1, 1); // [48, 48, 1024, 1]
         ggml_build_forward_expand(graph, conv2);
-        ggml_tensor* conv2_with_bias = ggml_add(ctx, conv2, v_c2b);
+        ggml_tensor* conv2_with_bias = ggml_add(ctx, conv2, conv2_bias);
         ggml_build_forward_expand(graph, conv2_with_bias);
         ggml_tensor* norm2 = ggml_group_norm(ctx, conv2_with_bias, 1024, 1e-5f);
         ggml_build_forward_expand(graph, norm2);
 
-        return norm2;
+        conv3_bias = ggml_reshape_4d(ctx, conv3_bias, 1, 1, 2048, 1);
+        ggml_tensor* conv3 = ggml_conv_2d(ctx, conv3_weight, norm2, 1, 1, 1, 1, 1, 1); // [48, 48, 2048, 1]
+        ggml_build_forward_expand(graph, conv3);
+        ggml_tensor* conv3_with_bias = ggml_add(ctx, conv3, conv3_bias);
+        ggml_build_forward_expand(graph, conv3_with_bias);
+        ggml_tensor* norm3 = ggml_group_norm(ctx, conv3_with_bias, 2048, 1e-5f);
+        ggml_build_forward_expand(graph, norm3);
+
+        return norm3;
     }
 
-    // Pool spatial dimensions
-    ggml_tensor* pool_spatial(ggml_context* ctx, ggml_cgraph* graph, ggml_tensor* norm2) {
-        ggml_tensor* reshaped = ggml_reshape_2d(ctx, norm2, 48 * 48, 1024);
+    ggml_tensor* pool_spatial(ggml_context* ctx, ggml_cgraph* graph, ggml_tensor* norm3) {
+        std::cout << "norm3 shape: [" << norm3->ne[0] << ", " << norm3->ne[1] << ", " << norm3->ne[2] << ", " << norm3->ne[3] << "]\n";
+        ggml_tensor* reshaped = ggml_reshape_2d(ctx, norm3, 48 * 48, 2048); // [2304, 2048]
         ggml_build_forward_expand(graph, reshaped);
-        ggml_tensor* pooled = ggml_mean(ctx, reshaped);
+        ggml_tensor* pooled = ggml_mean(ctx, reshaped); // [1, 2048]
         ggml_build_forward_expand(graph, pooled);
+        std::cout << "pooled shape: [" << pooled->ne[0] << ", " << pooled->ne[1] << ", " << pooled->ne[2] << ", " << pooled->ne[3] << "]\n";
         return pooled;
     }
 
-    // Project to text embedding space
-    ggml_tensor* project_vision(ggml_context* ctx, ggml_cgraph* graph, ggml_tensor* pooled) {
-        ggml_tensor* transposed = ggml_transpose(ctx, pooled);
+    ggml_tensor* project_vision(ggml_context* ctx, ggml_cgraph* graph, ggml_tensor* pooled, ggml_tensor* vision_projection_weight) {
+        // pooled: [1, 2048]
+        std::cout << "pooled shape: [" << pooled->ne[0] << ", " << pooled->ne[1] << ", " << pooled->ne[2] << ", " << pooled->ne[3] << "]\n";
+
+        ggml_tensor* transposed = ggml_transpose(ctx, pooled); // [2048, 1]
         ggml_build_forward_expand(graph, transposed);
 
-        ggml_tensor* projection = ggml_new_tensor_2d(ctx, GGML_TYPE_F16, 1024, 1024);
-        for (int i = 0; i < 1024 * 1024; ++i) {
-            ((ggml_fp16_t*)projection->data)[i] = ggml_fp32_to_fp16(i % 1024 == i / 1024 ? 1.0f : 0.0f);
-        }
-        ggml_tensor* output = ggml_mul_mat(ctx, projection, transposed);
+        std::cout << "vision_projection_weight shape: [" << vision_projection_weight->ne[0] << ", " << vision_projection_weight->ne[1] << ", " << vision_projection_weight->ne[2] << ", " << vision_projection_weight->ne[3] << "]\n";
+        std::cout << "transposed shape: [" << transposed->ne[0] << ", " << transposed->ne[1] << ", " << transposed->ne[2] << ", " << transposed->ne[3] << "]\n";
+
+        // Reshape to explicit 2D tensors
+        ggml_tensor* weight_2d = ggml_reshape_2d(ctx, vision_projection_weight, 2048, 1024); // [1024, 2048] -> [2048, 1024]
+        ggml_build_forward_expand(graph, weight_2d);
+        ggml_tensor* input_2d = ggml_reshape_2d(ctx, transposed, 2048, 1); // [2048, 1]
+        ggml_build_forward_expand(graph, input_2d);
+
+        ggml_tensor* output = ggml_mul_mat(ctx, weight_2d, input_2d); // [2048, 1024] * [2048, 1] = [2048, 1]
         assert(output != nullptr && "Vision output GGML matrix multiplication failed");
         ggml_build_forward_expand(graph, output);
 
-        ggml_tensor* corrected = ggml_reshape_2d(ctx, output, 1, 1024);
+        std::cout << "output shape: [" << output->ne[0] << ", " << output->ne[1] << ", " << output->ne[2] << ", " << output->ne[3] << "]\n";
+
+        ggml_tensor* corrected = ggml_reshape_2d(ctx, output, 1, 1024); // [1024, 1] -> [1, 1024]
         ggml_build_forward_expand(graph, corrected);
         return corrected;
     }
@@ -224,14 +259,21 @@ namespace Florence2Processor {
     ggml_tensor* Florence2Processor::process_image(const cv::Mat& image) {
         ggml_tensor* input = preprocess_image(ctx, pixel_values_prealloc, image, image_processor);
         ggml_tensor* features = apply_conv_stages(ctx, graph, input,
-                                                  load_tensor("v_c0w"), load_tensor("v_c0b"),
-                                                  load_tensor("v_c1w"), load_tensor("v_c1b"),
-                                                  load_tensor("v_c2w"), load_tensor("v_c2b"));
-        ggml_tensor* pooled = pool_spatial(ctx, graph, features);
-        return project_vision(ctx, graph, pooled);
+                                                  load_tensor("vision_tower.convs.0.proj.weight"),
+                                                  load_tensor("vision_tower.convs.0.proj.bias"),
+                                                  load_tensor("vision_tower.convs.1.proj.weight"),
+                                                  load_tensor("vision_tower.convs.1.proj.bias"),
+                                                  load_tensor("vision_tower.convs.2.proj.weight"),
+                                                  load_tensor("vision_tower.convs.2.proj.bias"),
+                                                  load_tensor("vision_tower.convs.3.proj.weight"),
+                                                  load_tensor("vision_tower.convs.3.proj.bias"));
+        ggml_tensor* pooled = pool_spatial(ctx, graph, features); // [1, 2048]
+        ggml_tensor* vision_projection_weight = load_tensor("image_projection");
+        return project_vision(ctx, graph, pooled, vision_projection_weight);
     }
 
-    ModelOutput Florence2Processor::process(const std::string& text, const cv::Mat& image, const std::vector<int64_t>& decoder_input_ids,
+    ModelOutput Florence2Processor::process(const std::string& text, const cv::Mat& image,
+                                            const std::vector<int64_t>& decoder_input_ids,
                                             const std::vector<PastKeyValueLayer>& past_key_values) {
         std::string prompt = task_prompts.count(text) ? task_prompts.at(text) : text;
         std::vector<uint32_t> token_ids = tokenizer.encode(prompt, true, 256 - image_seq_length, true, true, "longest");
@@ -244,15 +286,15 @@ namespace Florence2Processor {
         ggml_tensor* vision_output = process_image(image);
         int64_t* input_ids_data = static_cast<int64_t*>(ggml_get_data(input_ids_tensor_prealloc));
         std::copy(input_ids.begin(), input_ids.end(), input_ids_data);
-        ggml_tensor* t_wte = load_tensor("t_wte");
-        ggml_tensor* text_embeddings = ggml_mul_mat(ctx, t_wte, input_ids_tensor_prealloc);
+        ggml_tensor* decoder_embed_tokens_weight = load_tensor("language_model.model.decoder.embed_tokens.weight");
+        ggml_tensor* text_embeddings = ggml_mul_mat(ctx, decoder_embed_tokens_weight, input_ids_tensor_prealloc);
         ggml_build_forward_expand(graph, text_embeddings);
 
         ggml_tensor* encoder_input = ggml_concat(ctx, vision_output, text_embeddings, 0);
         ggml_build_forward_expand(graph, encoder_input);
 
-        ggml_tensor* t_out_w = load_tensor("t_out_w");
-        ggml_tensor* logits = ggml_mul_mat(ctx, t_out_w, encoder_input);
+        ggml_tensor* lm_head_weight = load_tensor("language_model.lm_head.weight");
+        ggml_tensor* logits = ggml_mul_mat(ctx, lm_head_weight, encoder_input);
         ggml_build_forward_expand(graph, logits);
 
         assert(ggml_gallocr_alloc_graph(galloc, graph) && "Failed to allocate graph memory");
