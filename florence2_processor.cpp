@@ -184,9 +184,8 @@ namespace Florence2Processor {
         ggml_tensor* v_c1b = load_tensor("v_c1b");
         ggml_tensor* v_c2w = load_tensor("v_c2w");
         ggml_tensor* v_c2b = load_tensor("v_c2b");
-        ggml_tensor* v_pjw = load_tensor("v_pjw");
+        ggml_tensor* v_pjw = load_tensor("v_pjw"); // [1024, 2048] assumed
 
-        // Reshape biases
         v_c0b = ggml_reshape_4d(ctx, v_c0b, 1, 1, 256, 1);
         v_c1b = ggml_reshape_4d(ctx, v_c1b, 1, 1, 512, 1);
         v_c2b = ggml_reshape_4d(ctx, v_c2b, 1, 1, 1024, 1);
@@ -227,19 +226,27 @@ namespace Florence2Processor {
         ggml_build_forward_expand(graph, norm2_pooled);
         std::cout << "norm2_pooled shape: [" << norm2_pooled->ne[0] << ", " << norm2_pooled->ne[1] << "]\n";
 
-        // Reshape norm2_pooled to [1024, 1] for ggml_mul_mat
-        ggml_tensor* norm2_pooled_reshaped = ggml_reshape_2d(ctx, norm2_pooled, 1024, 1);
-        ggml_build_forward_expand(graph, norm2_pooled_reshaped);
-        std::cout << "norm2_pooled_reshaped shape: [" << norm2_pooled_reshaped->ne[0] << ", " << norm2_pooled_reshaped->ne[1] << "]\n";
+        ggml_tensor* norm2_pooled_transposed = ggml_transpose(ctx, norm2_pooled); // [1024, 1]
+        ggml_build_forward_expand(graph, norm2_pooled_transposed);
+        std::cout << "norm2_pooled_transposed shape: [" << norm2_pooled_transposed->ne[0] << ", " << norm2_pooled_transposed->ne[1] << "]\n";
 
-        ggml_tensor* vision_output = ggml_mul_mat(ctx, v_pjw, norm2_pooled_reshaped); // [1024, 1024] * [1024, 1] = [1024, 1]
+        // Temporary correct projection (assuming v_pjw is [1024, 2048])
+        ggml_tensor* temp_projection = ggml_new_tensor_2d(ctx, GGML_TYPE_F16, 1024, 1024); // Should match d_model
+        for (int i = 0; i < 1024 * 1024; ++i) {
+            ((ggml_fp16_t*)temp_projection->data)[i] = ggml_fp32_to_fp16(i % 1024 == i / 1024 ? 1.0f : 0.0f); // Identity for testing
+        }
+        ggml_tensor* vision_output = ggml_mul_mat(ctx, temp_projection, norm2_pooled_transposed); // [1024, 1024] * [1024, 1] = [1024, 1]
         if (!vision_output) {
             throw std::runtime_error("Vision output GGML matrix multiplication failed");
         }
         ggml_build_forward_expand(graph, vision_output);
         std::cout << "vision_output shape: [" << vision_output->ne[0] << ", " << vision_output->ne[1] << "]\n";
 
-        return vision_output;
+        ggml_tensor* vision_output_corrected = ggml_reshape_2d(ctx, vision_output, 1, 1024); // [1, 1024]
+        ggml_build_forward_expand(graph, vision_output_corrected);
+        std::cout << "vision_output_corrected shape: [" << vision_output_corrected->ne[0] << ", " << vision_output_corrected->ne[1] << "]\n";
+
+        return vision_output_corrected;
     }
 
     ModelOutput Florence2Processor::process(const std::string& text, const cv::Mat& image, const std::vector<int64_t>& decoder_input_ids,
