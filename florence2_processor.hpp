@@ -15,10 +15,7 @@
 namespace Florence2Processor {
 
     struct PastKeyValueLayer {
-        std::vector<float> self_key;
-        std::vector<float> self_value;
-        std::vector<float> cross_key;
-        std::vector<float> cross_value;
+        // Define as needed
     };
 
     struct ModelOutput {
@@ -53,6 +50,7 @@ namespace Florence2Processor {
         ggml_tensor* norm2_prealloc;
         ggml_tensor* input_ids_tensor_prealloc;
         ggml_tensor* decoder_input_ids_tensor_prealloc;
+
         std::unordered_map<std::string, ggml_tensor*> tensors;
         BartTokenizerFast tokenizer;
         CLIPImageProcessor image_processor;
@@ -65,10 +63,16 @@ namespace Florence2Processor {
         int t_ffn_dim;
         int v_img_size;
 
-        ggml_tensor* load_tensor(const std::string& name);
         void initialize_ggml_context(const std::string& gguf_path);
         void reset_graph_allocator();
+        ggml_tensor* load_tensor(const std::string& name);
         int get_metadata_int(gguf_context* ctx, const std::string& key);
+
+        // New helper for manual matrix multiplication
+        ggml_tensor* manual_mul_mat(ggml_context* ctx, ggml_tensor* a, ggml_tensor* b);
+
+        // New function for image processing
+        ggml_tensor* process_image(const cv::Mat& image);
     };
 
 } // namespace Florence2Processor
