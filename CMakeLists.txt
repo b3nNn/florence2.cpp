@@ -42,6 +42,7 @@ add_executable(bart-cpp # test_florence2_onnx.cpp
         hf_tokenizer/hf_tokenizers.cpp
         clip_image_processor.cpp
         #        ggml_florence2.cpp
+        test_florence2.cpp
         florence2_processor.cpp)
 target_include_directories(bart-cpp PRIVATE
         ${CMAKE_SOURCE_DIR}/hf_tokenizer

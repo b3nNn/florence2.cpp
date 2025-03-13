@@ -3,10 +3,12 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include <opencv2/opencv.hpp>
 #include "ggml.h"
-#include "gguf.h"  // From llama.cpp for GGUF parsing
-#include "ggml-alloc.h" // From llama.cpp
+#include "gguf.h"
+#include "ggml-alloc.h"
+#include "ggml-cpu.h"
 #include "bart_tokenizer_fast.hpp"
 #include "clip_image_processor.hpp"
 
@@ -36,8 +38,9 @@ namespace Florence2Processor {
 
     private:
         ggml_context* ctx;
+        ggml_context* gguf_ctx;
         ggml_gallocr_t galloc;
-        ggml_cgraph* graph; // Single reusable graph
+        ggml_cgraph* graph;
         ggml_tensor* pixel_values_prealloc;
         ggml_tensor* conv0_output;
         ggml_tensor* conv0_bias;
@@ -50,12 +53,10 @@ namespace Florence2Processor {
         ggml_tensor* norm2_prealloc;
         ggml_tensor* input_ids_tensor_prealloc;
         ggml_tensor* decoder_input_ids_tensor_prealloc;
-        gguf_context* gguf_ctx;
         std::unordered_map<std::string, ggml_tensor*> tensors;
         BartTokenizerFast tokenizer;
         CLIPImageProcessor image_processor;
 
-        // Model parameters from GGUF metadata
         int vocab_size;
         int t_dec_layers;
         int t_enc_layers;
@@ -64,9 +65,9 @@ namespace Florence2Processor {
         int t_ffn_dim;
         int v_img_size;
 
-        // Helper functions
         ggml_tensor* load_tensor(const std::string& name);
         void initialize_ggml_context(const std::string& gguf_path);
+        void reset_graph_allocator();
         int get_metadata_int(gguf_context* ctx, const std::string& key);
     };
 
