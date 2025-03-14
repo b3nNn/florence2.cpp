@@ -22,7 +22,7 @@ public:
     Florence2Processor(const std::string& gguf_path, const std::string& tokenizer_config_path,
                        const std::string& image_config_path, const std::string& mapping_path)
             : ctx_(nullptr), gguf_(nullptr), galloc_(nullptr), graph_(nullptr),
-              tokenizer_(tokenizer_config_path), image_processor_(image_config_path, 768) {
+              tokenizer_(tokenizer_config_path), image_processor_(image_config_path, 768), pixel_values(nullptr) {
         // Validate file existence
         if (!std::filesystem::exists(gguf_path)) throw std::runtime_error("GGUF file not found: " + gguf_path);
         if (!std::filesystem::exists(tokenizer_config_path)) throw std::runtime_error("Tokenizer config file not found: " + tokenizer_config_path);
@@ -110,7 +110,7 @@ public:
     }
 
 private:
-    struct ggml_context* ctx_;
+    ggml_context* ctx_;
     struct gguf_context* gguf_;
     struct ggml_gallocr* galloc_;
     struct ggml_cgraph* graph_;
@@ -124,36 +124,58 @@ private:
     int t_enc_layers_ = 12;
     int t_hidden_ = 1024;
     int v_img_size_ = 768;
+    ggml_tensor* pixel_values;
 
     void initialize_ggml_context(const std::string& gguf_path) {
-        // Calculate required memory size (pseudo-function; replace with actual GGUF API if available)
-        size_t required_memory_size = 2ULL * 1024 * 1024 * 1024; // 2GB estimate; adjust based on model size
+        struct gguf_init_params gguf_params_no_alloc = { .no_alloc = true, .ctx = nullptr };
+        gguf_context* gguf_temp = gguf_init_from_file(gguf_path.c_str(), gguf_params_no_alloc);
+        if (!gguf_temp) throw std::runtime_error("Failed to load GGUF file for memory size calculation");
+
+        size_t total_memory_size = 0;
+        int n_tensors = gguf_get_n_tensors(gguf_temp);
+        for (int i = 0; i < n_tensors; ++i) {
+            const char* name = gguf_get_tensor_name(gguf_temp, i);
+            total_memory_size += gguf_get_tensor_size(gguf_temp, i);;
+        }
+
+        total_memory_size += 768 * 768 * 3 * 1 * sizeof(ggml_fp16_t) + GGML_TENSOR_SIZE;
+        total_memory_size += 7 * 7 * 3 * 256 * sizeof(ggml_fp16_t) + GGML_TENSOR_SIZE;
+
+        size_t buffer_size = std::max(total_memory_size / 20, static_cast<size_t>(256 * 1024 * 1024));
+        total_memory_size += buffer_size;
+
+        gguf_free(gguf_temp);
+
         struct ggml_init_params params = {
-                .mem_size = required_memory_size,
+                .mem_size = total_memory_size,
                 .mem_buffer = nullptr
         };
         ctx_ = ggml_init(params);
-        if (!ctx_) throw std::runtime_error("Failed to initialize GGML context");
+        if (!ctx_) {
+            throw std::runtime_error("Failed to initialize GGML context");
+        }
 
-        // Load GGUF file
+        pixel_values = ggml_new_tensor_4d(ctx_, GGML_TYPE_F16, 768, 768, 3, 1);
+
         struct gguf_init_params gguf_params = { .no_alloc = false, .ctx = &ctx_ };
         gguf_ = gguf_init_from_file(gguf_path.c_str(), gguf_params);
         if (!gguf_) throw std::runtime_error("Failed to load GGUF file");
 
-        // Populate tensors
-        int n_tensors = gguf_get_n_tensors(gguf_);
+//        graph_ = ggml_new_graph(ctx_);
+//        if (!graph_) throw std::runtime_error("Failed to initialize computation graph");
         for (int i = 0; i < n_tensors; ++i) {
             const char* name = gguf_get_tensor_name(gguf_, i);
             ggml_tensor* tensor = ggml_get_tensor(ctx_, name);
             if (!tensor) throw std::runtime_error("Failed to get tensor: " + std::string(name));
             tensors_[name] = tensor;
         }
-
-        // Initialize computation graph
-        graph_ = ggml_new_graph(ctx_);
-        if (!graph_) throw std::runtime_error("Failed to initialize computation graph");
-
-        // Initialize graph allocator
+//        // Step 10: Initialize computation graph and allocator
+//        graph_ = ggml_new_graph(ctx_);
+//        if (!graph_) {
+//            gguf_free(gguf_);
+//            ggml_free(ctx_);
+//            throw std::runtime_error("Failed to initialize computation graph");
+//        }
         galloc_ = ggml_gallocr_new(ggml_backend_cpu_buffer_type());
         if (!galloc_) throw std::runtime_error("Failed to initialize graph allocator");
     }
@@ -183,7 +205,6 @@ private:
 
         // Convert torch::Tensor to GGML tensor
         image_tensor = image_tensor.squeeze(0).permute({2, 1, 0}); // [768, 768, 3]
-        ggml_tensor* pixel_values = ggml_new_tensor_4d(ctx_, GGML_TYPE_F16, 768, 768, 3, 1);
         ggml_fp16_t* pixel_data = static_cast<ggml_fp16_t*>(ggml_get_data(pixel_values));
         float* tensor_data = image_tensor.data_ptr<float>();
         size_t expected_size = 768 * 768 * 3;
