@@ -12,8 +12,8 @@ include_directories(${ONNXRUNTIME_ROOT}/include)
 link_directories(${ONNXRUNTIME_LIB}/lib)
 
 # GGML library (unused in Florence-2, kept for completeness)
-set(GGML_LIB_DIR "${CMAKE_SOURCE_DIR}/llama.cpp/build/ggml/src/Release")
-set(GGML_DLL_DIR "${CMAKE_SOURCE_DIR}/llama.cpp/build/bin/Release")
+set(GGML_LIB_DIR "${CMAKE_SOURCE_DIR}/ggml/build/src/Release")
+set(GGML_DLL_DIR "${CMAKE_SOURCE_DIR}/ggml/build/bin/Release")
 set(GGML_DLL_NAME "ggml")
 
 # Find libprotobuf.lib
@@ -30,7 +30,7 @@ message(STATUS "Found libprotobuf.lib at: ${PROTOBUF_LIB}")
 # Torch
 set(Torch_DIR $ENV{Torch_DIR})
 set(Torch_LIB $ENV{Torch_LIB})
-include_directories("${Torch_DIR}/include" "${Torch_DIR}/include/torch/csrc/api/include" "${CMAKE_SOURCE_DIR}/llama.cpp/ggml/include")
+include_directories("${Torch_DIR}/include" "${Torch_DIR}/include/torch/csrc/api/include" "${CMAKE_SOURCE_DIR}/ggml/include" "${CMAKE_SOURCE_DIR}/ggml/src/ggml-cpu" "${CMAKE_SOURCE_DIR}/ggml/src")
 
 # OpenCV
 find_package(OpenCV REQUIRED)

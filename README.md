@@ -4,11 +4,13 @@ The goal of this project is to produce a C++ version of [BART](https://huggingfa
 
 _To be continued..._
 
-## Llama.cpp
+## GGML
 
 ```shell
-cmake -S . -B build -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Release -DGGML_CCACHE=OFF -DBUILD_SHARED_LIBS=ON
-cmake --build build --config Release -j
+git clone https://github.com/ggml-org/ggml
+cd ggml
+cmake -S . -B build -G "Visual Studio 16 2019"
+cmake --build build --config Release -j 8
 ```
 
 ## GGUF

@@ -1,0 +1,5556 @@
+=== Metadata ===
+general.architecture: florence2
+general.name: Florence-2-large-ft
+general.description: Florence-2 vision-language model in GGUF
+general.author: Microsoft Research
+vocab_size: 51289
+proj_dim: 1024
+bos_id: 0
+eos_id: 2
+pad_id: 1
+general.alignment: 32
+t_vocab_size: 51289
+t_max_pos: 1024
+t_hidden: 1024
+t_dec_layers: 12
+t_enc_layers: 12
+t_heads: 16
+t_ffn_dim: 4096
+v_img_size: 768
+v_stages: 4
+v_patch_size: <unsupported type>
+v_patch_stride: <unsupported type>
+v_patch_pad: <unsupported type>
+v_dim_embed: <unsupported type>
+v_heads: <unsupported type>
+v_depths: <unsupported type>
+v_win_size: 12
+v_proj_dim: 1024
+
+=== Tensors ===
+Tensor: v_pjw
+  Full Name: image_projection
+  Shape: [1024, 2048, 1, 1]
+  Type: float16
+  Elements: 2097152
+
+Tensor: v_c0w
+  Full Name: vision_tower.convs.0.proj.weight
+  Shape: [7, 7, 3, 256]
+  Type: float16
+  Elements: 37632
+
+Tensor: v_c0b
+  Full Name: vision_tower.convs.0.proj.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v_n0w
+  Full Name: vision_tower.convs.0.norm.weight
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v_n0b
+  Full Name: vision_tower.convs.0.norm.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v_c1w
+  Full Name: vision_tower.convs.1.proj.weight
+  Shape: [3, 3, 256, 512]
+  Type: float16
+  Elements: 1179648
+
+Tensor: v_c1b
+  Full Name: vision_tower.convs.1.proj.bias
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v_n1w
+  Full Name: vision_tower.convs.1.norm.weight
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v_n1b
+  Full Name: vision_tower.convs.1.norm.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v_c2w
+  Full Name: vision_tower.convs.2.proj.weight
+  Shape: [3, 3, 512, 1024]
+  Type: float16
+  Elements: 4718592
+
+Tensor: v_c2b
+  Full Name: vision_tower.convs.2.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v_n2w
+  Full Name: vision_tower.convs.2.norm.weight
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v_n2b
+  Full Name: vision_tower.convs.2.norm.bias
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v_c3w
+  Full Name: vision_tower.convs.3.proj.weight
+  Shape: [3, 3, 1024, 2048]
+  Type: float16
+  Elements: 18874368
+
+Tensor: v_c3b
+  Full Name: vision_tower.convs.3.proj.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v_n3w
+  Full Name: vision_tower.convs.3.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v_n3b
+  Full Name: vision_tower.convs.3.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v0s_c1w
+  Full Name: vision_tower.blocks.0.0.spatial_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 256]
+  Type: float16
+  Elements: 2304
+
+Tensor: v0s_c1b
+  Full Name: vision_tower.blocks.0.0.spatial_block.conv1.fn.dw.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0s_nw
+  Full Name: vision_tower.blocks.0.0.spatial_block.window_attn.norm.weight
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0s_nb
+  Full Name: vision_tower.blocks.0.0.spatial_block.window_attn.norm.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0s_qkvw
+  Full Name: vision_tower.blocks.0.0.spatial_block.window_attn.fn.qkv.weight
+  Shape: [256, 768, 1, 1]
+  Type: float16
+  Elements: 196608
+
+Tensor: v0s_qkvb
+  Full Name: vision_tower.blocks.0.0.spatial_block.window_attn.fn.qkv.bias
+  Shape: [768, 1, 1, 1]
+  Type: float16
+  Elements: 768
+
+Tensor: v0s_pw
+  Full Name: vision_tower.blocks.0.0.spatial_block.window_attn.fn.proj.weight
+  Shape: [256, 256, 1, 1]
+  Type: float16
+  Elements: 65536
+
+Tensor: v0s_pb
+  Full Name: vision_tower.blocks.0.0.spatial_block.window_attn.fn.proj.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0s_c2w
+  Full Name: vision_tower.blocks.0.0.spatial_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 256]
+  Type: float16
+  Elements: 2304
+
+Tensor: v0s_c2b
+  Full Name: vision_tower.blocks.0.0.spatial_block.conv2.fn.dw.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0s_fnw
+  Full Name: vision_tower.blocks.0.0.spatial_block.ffn.norm.weight
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0s_fnb
+  Full Name: vision_tower.blocks.0.0.spatial_block.ffn.norm.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0s_f1w
+  Full Name: vision_tower.blocks.0.0.spatial_block.ffn.fn.net.fc1.weight
+  Shape: [256, 1024, 1, 1]
+  Type: float16
+  Elements: 262144
+
+Tensor: v0s_f1b
+  Full Name: vision_tower.blocks.0.0.spatial_block.ffn.fn.net.fc1.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v0s_f2w
+  Full Name: vision_tower.blocks.0.0.spatial_block.ffn.fn.net.fc2.weight
+  Shape: [1024, 256, 1, 1]
+  Type: float16
+  Elements: 262144
+
+Tensor: v0s_f2b
+  Full Name: vision_tower.blocks.0.0.spatial_block.ffn.fn.net.fc2.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0c_c1w
+  Full Name: vision_tower.blocks.0.0.channel_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 256]
+  Type: float16
+  Elements: 2304
+
+Tensor: v0c_c1b
+  Full Name: vision_tower.blocks.0.0.channel_block.conv1.fn.dw.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0c_nw
+  Full Name: vision_tower.blocks.0.0.channel_block.channel_attn.norm.weight
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0c_nb
+  Full Name: vision_tower.blocks.0.0.channel_block.channel_attn.norm.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0c_qkvw
+  Full Name: vision_tower.blocks.0.0.channel_block.channel_attn.fn.qkv.weight
+  Shape: [256, 768, 1, 1]
+  Type: float16
+  Elements: 196608
+
+Tensor: v0c_qkvb
+  Full Name: vision_tower.blocks.0.0.channel_block.channel_attn.fn.qkv.bias
+  Shape: [768, 1, 1, 1]
+  Type: float16
+  Elements: 768
+
+Tensor: v0c_pw
+  Full Name: vision_tower.blocks.0.0.channel_block.channel_attn.fn.proj.weight
+  Shape: [256, 256, 1, 1]
+  Type: float16
+  Elements: 65536
+
+Tensor: v0c_pb
+  Full Name: vision_tower.blocks.0.0.channel_block.channel_attn.fn.proj.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0c_c2w
+  Full Name: vision_tower.blocks.0.0.channel_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 256]
+  Type: float16
+  Elements: 2304
+
+Tensor: v0c_c2b
+  Full Name: vision_tower.blocks.0.0.channel_block.conv2.fn.dw.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0c_fnw
+  Full Name: vision_tower.blocks.0.0.channel_block.ffn.norm.weight
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0c_fnb
+  Full Name: vision_tower.blocks.0.0.channel_block.ffn.norm.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v0c_f1w
+  Full Name: vision_tower.blocks.0.0.channel_block.ffn.fn.net.fc1.weight
+  Shape: [256, 1024, 1, 1]
+  Type: float16
+  Elements: 262144
+
+Tensor: v0c_f1b
+  Full Name: vision_tower.blocks.0.0.channel_block.ffn.fn.net.fc1.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v0c_f2w
+  Full Name: vision_tower.blocks.0.0.channel_block.ffn.fn.net.fc2.weight
+  Shape: [1024, 256, 1, 1]
+  Type: float16
+  Elements: 262144
+
+Tensor: v0c_f2b
+  Full Name: vision_tower.blocks.0.0.channel_block.ffn.fn.net.fc2.bias
+  Shape: [256, 1, 1, 1]
+  Type: float16
+  Elements: 256
+
+Tensor: v1s_c1w
+  Full Name: vision_tower.blocks.1.0.spatial_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 512]
+  Type: float16
+  Elements: 4608
+
+Tensor: v1s_c1b
+  Full Name: vision_tower.blocks.1.0.spatial_block.conv1.fn.dw.bias
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1s_nw
+  Full Name: vision_tower.blocks.1.0.spatial_block.window_attn.norm.weight
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1s_nb
+  Full Name: vision_tower.blocks.1.0.spatial_block.window_attn.norm.bias
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1s_qkvw
+  Full Name: vision_tower.blocks.1.0.spatial_block.window_attn.fn.qkv.weight
+  Shape: [512, 1536, 1, 1]
+  Type: float16
+  Elements: 786432
+
+Tensor: v1s_qkvb
+  Full Name: vision_tower.blocks.1.0.spatial_block.window_attn.fn.qkv.bias
+  Shape: [1536, 1, 1, 1]
+  Type: float16
+  Elements: 1536
+
+Tensor: v1s_pw
+  Full Name: vision_tower.blocks.1.0.spatial_block.window_attn.fn.proj.weight
+  Shape: [512, 512, 1, 1]
+  Type: float16
+  Elements: 262144
+
+Tensor: v1s_pb
+  Full Name: vision_tower.blocks.1.0.spatial_block.window_attn.fn.proj.bias
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1s_c2w
+  Full Name: vision_tower.blocks.1.0.spatial_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 512]
+  Type: float16
+  Elements: 4608
+
+Tensor: v1s_c2b
+  Full Name: vision_tower.blocks.1.0.spatial_block.conv2.fn.dw.bias
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1s_fnw
+  Full Name: vision_tower.blocks.1.0.spatial_block.ffn.norm.weight
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1s_fnb
+  Full Name: vision_tower.blocks.1.0.spatial_block.ffn.norm.bias
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1s_f1w
+  Full Name: vision_tower.blocks.1.0.spatial_block.ffn.fn.net.fc1.weight
+  Shape: [512, 2048, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v1s_f1b
+  Full Name: vision_tower.blocks.1.0.spatial_block.ffn.fn.net.fc1.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v1s_f2w
+  Full Name: vision_tower.blocks.1.0.spatial_block.ffn.fn.net.fc2.weight
+  Shape: [2048, 512, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v1s_f2b
+  Full Name: vision_tower.blocks.1.0.spatial_block.ffn.fn.net.fc2.bias
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1c_c1w
+  Full Name: vision_tower.blocks.1.0.channel_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 512]
+  Type: float16
+  Elements: 4608
+
+Tensor: v1c_c1b
+  Full Name: vision_tower.blocks.1.0.channel_block.conv1.fn.dw.bias
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1c_nw
+  Full Name: vision_tower.blocks.1.0.channel_block.channel_attn.norm.weight
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1c_nb
+  Full Name: vision_tower.blocks.1.0.channel_block.channel_attn.norm.bias
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1c_qkvw
+  Full Name: vision_tower.blocks.1.0.channel_block.channel_attn.fn.qkv.weight
+  Shape: [512, 1536, 1, 1]
+  Type: float16
+  Elements: 786432
+
+Tensor: v1c_qkvb
+  Full Name: vision_tower.blocks.1.0.channel_block.channel_attn.fn.qkv.bias
+  Shape: [1536, 1, 1, 1]
+  Type: float16
+  Elements: 1536
+
+Tensor: v1c_pw
+  Full Name: vision_tower.blocks.1.0.channel_block.channel_attn.fn.proj.weight
+  Shape: [512, 512, 1, 1]
+  Type: float16
+  Elements: 262144
+
+Tensor: v1c_pb
+  Full Name: vision_tower.blocks.1.0.channel_block.channel_attn.fn.proj.bias
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1c_c2w
+  Full Name: vision_tower.blocks.1.0.channel_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 512]
+  Type: float16
+  Elements: 4608
+
+Tensor: v1c_c2b
+  Full Name: vision_tower.blocks.1.0.channel_block.conv2.fn.dw.bias
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1c_fnw
+  Full Name: vision_tower.blocks.1.0.channel_block.ffn.norm.weight
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1c_fnb
+  Full Name: vision_tower.blocks.1.0.channel_block.ffn.norm.bias
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v1c_f1w
+  Full Name: vision_tower.blocks.1.0.channel_block.ffn.fn.net.fc1.weight
+  Shape: [512, 2048, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v1c_f1b
+  Full Name: vision_tower.blocks.1.0.channel_block.ffn.fn.net.fc1.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v1c_f2w
+  Full Name: vision_tower.blocks.1.0.channel_block.ffn.fn.net.fc2.weight
+  Shape: [2048, 512, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v1c_f2b
+  Full Name: vision_tower.blocks.1.0.channel_block.ffn.fn.net.fc2.bias
+  Shape: [512, 1, 1, 1]
+  Type: float16
+  Elements: 512
+
+Tensor: v2s_c1w
+  Full Name: vision_tower.blocks.2.0.spatial_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v2s_c1b
+  Full Name: vision_tower.blocks.2.0.spatial_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2s_nw
+  Full Name: vision_tower.blocks.2.0.spatial_block.window_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2s_nb
+  Full Name: vision_tower.blocks.2.0.spatial_block.window_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2s_qkvw
+  Full Name: vision_tower.blocks.2.0.spatial_block.window_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v2s_qkvb
+  Full Name: vision_tower.blocks.2.0.spatial_block.window_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v2s_pw
+  Full Name: vision_tower.blocks.2.0.spatial_block.window_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v2s_pb
+  Full Name: vision_tower.blocks.2.0.spatial_block.window_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2s_c2w
+  Full Name: vision_tower.blocks.2.0.spatial_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v2s_c2b
+  Full Name: vision_tower.blocks.2.0.spatial_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2s_fnw
+  Full Name: vision_tower.blocks.2.0.spatial_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2s_fnb
+  Full Name: vision_tower.blocks.2.0.spatial_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2s_f1w
+  Full Name: vision_tower.blocks.2.0.spatial_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v2s_f1b
+  Full Name: vision_tower.blocks.2.0.spatial_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v2s_f2w
+  Full Name: vision_tower.blocks.2.0.spatial_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v2s_f2b
+  Full Name: vision_tower.blocks.2.0.spatial_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2c_c1w
+  Full Name: vision_tower.blocks.2.0.channel_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v2c_c1b
+  Full Name: vision_tower.blocks.2.0.channel_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2c_nw
+  Full Name: vision_tower.blocks.2.0.channel_block.channel_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2c_nb
+  Full Name: vision_tower.blocks.2.0.channel_block.channel_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2c_qkvw
+  Full Name: vision_tower.blocks.2.0.channel_block.channel_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v2c_qkvb
+  Full Name: vision_tower.blocks.2.0.channel_block.channel_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v2c_pw
+  Full Name: vision_tower.blocks.2.0.channel_block.channel_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v2c_pb
+  Full Name: vision_tower.blocks.2.0.channel_block.channel_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2c_c2w
+  Full Name: vision_tower.blocks.2.0.channel_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v2c_c2b
+  Full Name: vision_tower.blocks.2.0.channel_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2c_fnw
+  Full Name: vision_tower.blocks.2.0.channel_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2c_fnb
+  Full Name: vision_tower.blocks.2.0.channel_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v2c_f1w
+  Full Name: vision_tower.blocks.2.0.channel_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v2c_f1b
+  Full Name: vision_tower.blocks.2.0.channel_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v2c_f2w
+  Full Name: vision_tower.blocks.2.0.channel_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v2c_f2b
+  Full Name: vision_tower.blocks.2.0.channel_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3s_c1w
+  Full Name: vision_tower.blocks.2.1.spatial_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v3s_c1b
+  Full Name: vision_tower.blocks.2.1.spatial_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3s_nw
+  Full Name: vision_tower.blocks.2.1.spatial_block.window_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3s_nb
+  Full Name: vision_tower.blocks.2.1.spatial_block.window_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3s_qkvw
+  Full Name: vision_tower.blocks.2.1.spatial_block.window_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v3s_qkvb
+  Full Name: vision_tower.blocks.2.1.spatial_block.window_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v3s_pw
+  Full Name: vision_tower.blocks.2.1.spatial_block.window_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v3s_pb
+  Full Name: vision_tower.blocks.2.1.spatial_block.window_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3s_c2w
+  Full Name: vision_tower.blocks.2.1.spatial_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v3s_c2b
+  Full Name: vision_tower.blocks.2.1.spatial_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3s_fnw
+  Full Name: vision_tower.blocks.2.1.spatial_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3s_fnb
+  Full Name: vision_tower.blocks.2.1.spatial_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3s_f1w
+  Full Name: vision_tower.blocks.2.1.spatial_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v3s_f1b
+  Full Name: vision_tower.blocks.2.1.spatial_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v3s_f2w
+  Full Name: vision_tower.blocks.2.1.spatial_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v3s_f2b
+  Full Name: vision_tower.blocks.2.1.spatial_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3c_c1w
+  Full Name: vision_tower.blocks.2.1.channel_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v3c_c1b
+  Full Name: vision_tower.blocks.2.1.channel_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3c_nw
+  Full Name: vision_tower.blocks.2.1.channel_block.channel_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3c_nb
+  Full Name: vision_tower.blocks.2.1.channel_block.channel_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3c_qkvw
+  Full Name: vision_tower.blocks.2.1.channel_block.channel_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v3c_qkvb
+  Full Name: vision_tower.blocks.2.1.channel_block.channel_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v3c_pw
+  Full Name: vision_tower.blocks.2.1.channel_block.channel_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v3c_pb
+  Full Name: vision_tower.blocks.2.1.channel_block.channel_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3c_c2w
+  Full Name: vision_tower.blocks.2.1.channel_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v3c_c2b
+  Full Name: vision_tower.blocks.2.1.channel_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3c_fnw
+  Full Name: vision_tower.blocks.2.1.channel_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3c_fnb
+  Full Name: vision_tower.blocks.2.1.channel_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v3c_f1w
+  Full Name: vision_tower.blocks.2.1.channel_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v3c_f1b
+  Full Name: vision_tower.blocks.2.1.channel_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v3c_f2w
+  Full Name: vision_tower.blocks.2.1.channel_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v3c_f2b
+  Full Name: vision_tower.blocks.2.1.channel_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4s_c1w
+  Full Name: vision_tower.blocks.2.2.spatial_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v4s_c1b
+  Full Name: vision_tower.blocks.2.2.spatial_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4s_nw
+  Full Name: vision_tower.blocks.2.2.spatial_block.window_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4s_nb
+  Full Name: vision_tower.blocks.2.2.spatial_block.window_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4s_qkvw
+  Full Name: vision_tower.blocks.2.2.spatial_block.window_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v4s_qkvb
+  Full Name: vision_tower.blocks.2.2.spatial_block.window_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v4s_pw
+  Full Name: vision_tower.blocks.2.2.spatial_block.window_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v4s_pb
+  Full Name: vision_tower.blocks.2.2.spatial_block.window_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4s_c2w
+  Full Name: vision_tower.blocks.2.2.spatial_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v4s_c2b
+  Full Name: vision_tower.blocks.2.2.spatial_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4s_fnw
+  Full Name: vision_tower.blocks.2.2.spatial_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4s_fnb
+  Full Name: vision_tower.blocks.2.2.spatial_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4s_f1w
+  Full Name: vision_tower.blocks.2.2.spatial_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v4s_f1b
+  Full Name: vision_tower.blocks.2.2.spatial_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v4s_f2w
+  Full Name: vision_tower.blocks.2.2.spatial_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v4s_f2b
+  Full Name: vision_tower.blocks.2.2.spatial_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4c_c1w
+  Full Name: vision_tower.blocks.2.2.channel_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v4c_c1b
+  Full Name: vision_tower.blocks.2.2.channel_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4c_nw
+  Full Name: vision_tower.blocks.2.2.channel_block.channel_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4c_nb
+  Full Name: vision_tower.blocks.2.2.channel_block.channel_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4c_qkvw
+  Full Name: vision_tower.blocks.2.2.channel_block.channel_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v4c_qkvb
+  Full Name: vision_tower.blocks.2.2.channel_block.channel_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v4c_pw
+  Full Name: vision_tower.blocks.2.2.channel_block.channel_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v4c_pb
+  Full Name: vision_tower.blocks.2.2.channel_block.channel_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4c_c2w
+  Full Name: vision_tower.blocks.2.2.channel_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v4c_c2b
+  Full Name: vision_tower.blocks.2.2.channel_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4c_fnw
+  Full Name: vision_tower.blocks.2.2.channel_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4c_fnb
+  Full Name: vision_tower.blocks.2.2.channel_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v4c_f1w
+  Full Name: vision_tower.blocks.2.2.channel_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v4c_f1b
+  Full Name: vision_tower.blocks.2.2.channel_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v4c_f2w
+  Full Name: vision_tower.blocks.2.2.channel_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v4c_f2b
+  Full Name: vision_tower.blocks.2.2.channel_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5s_c1w
+  Full Name: vision_tower.blocks.2.3.spatial_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v5s_c1b
+  Full Name: vision_tower.blocks.2.3.spatial_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5s_nw
+  Full Name: vision_tower.blocks.2.3.spatial_block.window_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5s_nb
+  Full Name: vision_tower.blocks.2.3.spatial_block.window_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5s_qkvw
+  Full Name: vision_tower.blocks.2.3.spatial_block.window_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v5s_qkvb
+  Full Name: vision_tower.blocks.2.3.spatial_block.window_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v5s_pw
+  Full Name: vision_tower.blocks.2.3.spatial_block.window_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v5s_pb
+  Full Name: vision_tower.blocks.2.3.spatial_block.window_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5s_c2w
+  Full Name: vision_tower.blocks.2.3.spatial_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v5s_c2b
+  Full Name: vision_tower.blocks.2.3.spatial_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5s_fnw
+  Full Name: vision_tower.blocks.2.3.spatial_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5s_fnb
+  Full Name: vision_tower.blocks.2.3.spatial_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5s_f1w
+  Full Name: vision_tower.blocks.2.3.spatial_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v5s_f1b
+  Full Name: vision_tower.blocks.2.3.spatial_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v5s_f2w
+  Full Name: vision_tower.blocks.2.3.spatial_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v5s_f2b
+  Full Name: vision_tower.blocks.2.3.spatial_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5c_c1w
+  Full Name: vision_tower.blocks.2.3.channel_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v5c_c1b
+  Full Name: vision_tower.blocks.2.3.channel_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5c_nw
+  Full Name: vision_tower.blocks.2.3.channel_block.channel_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5c_nb
+  Full Name: vision_tower.blocks.2.3.channel_block.channel_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5c_qkvw
+  Full Name: vision_tower.blocks.2.3.channel_block.channel_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v5c_qkvb
+  Full Name: vision_tower.blocks.2.3.channel_block.channel_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v5c_pw
+  Full Name: vision_tower.blocks.2.3.channel_block.channel_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v5c_pb
+  Full Name: vision_tower.blocks.2.3.channel_block.channel_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5c_c2w
+  Full Name: vision_tower.blocks.2.3.channel_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v5c_c2b
+  Full Name: vision_tower.blocks.2.3.channel_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5c_fnw
+  Full Name: vision_tower.blocks.2.3.channel_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5c_fnb
+  Full Name: vision_tower.blocks.2.3.channel_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v5c_f1w
+  Full Name: vision_tower.blocks.2.3.channel_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v5c_f1b
+  Full Name: vision_tower.blocks.2.3.channel_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v5c_f2w
+  Full Name: vision_tower.blocks.2.3.channel_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v5c_f2b
+  Full Name: vision_tower.blocks.2.3.channel_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6s_c1w
+  Full Name: vision_tower.blocks.2.4.spatial_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v6s_c1b
+  Full Name: vision_tower.blocks.2.4.spatial_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6s_nw
+  Full Name: vision_tower.blocks.2.4.spatial_block.window_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6s_nb
+  Full Name: vision_tower.blocks.2.4.spatial_block.window_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6s_qkvw
+  Full Name: vision_tower.blocks.2.4.spatial_block.window_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v6s_qkvb
+  Full Name: vision_tower.blocks.2.4.spatial_block.window_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v6s_pw
+  Full Name: vision_tower.blocks.2.4.spatial_block.window_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v6s_pb
+  Full Name: vision_tower.blocks.2.4.spatial_block.window_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6s_c2w
+  Full Name: vision_tower.blocks.2.4.spatial_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v6s_c2b
+  Full Name: vision_tower.blocks.2.4.spatial_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6s_fnw
+  Full Name: vision_tower.blocks.2.4.spatial_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6s_fnb
+  Full Name: vision_tower.blocks.2.4.spatial_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6s_f1w
+  Full Name: vision_tower.blocks.2.4.spatial_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v6s_f1b
+  Full Name: vision_tower.blocks.2.4.spatial_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v6s_f2w
+  Full Name: vision_tower.blocks.2.4.spatial_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v6s_f2b
+  Full Name: vision_tower.blocks.2.4.spatial_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6c_c1w
+  Full Name: vision_tower.blocks.2.4.channel_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v6c_c1b
+  Full Name: vision_tower.blocks.2.4.channel_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6c_nw
+  Full Name: vision_tower.blocks.2.4.channel_block.channel_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6c_nb
+  Full Name: vision_tower.blocks.2.4.channel_block.channel_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6c_qkvw
+  Full Name: vision_tower.blocks.2.4.channel_block.channel_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v6c_qkvb
+  Full Name: vision_tower.blocks.2.4.channel_block.channel_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v6c_pw
+  Full Name: vision_tower.blocks.2.4.channel_block.channel_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v6c_pb
+  Full Name: vision_tower.blocks.2.4.channel_block.channel_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6c_c2w
+  Full Name: vision_tower.blocks.2.4.channel_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v6c_c2b
+  Full Name: vision_tower.blocks.2.4.channel_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6c_fnw
+  Full Name: vision_tower.blocks.2.4.channel_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6c_fnb
+  Full Name: vision_tower.blocks.2.4.channel_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v6c_f1w
+  Full Name: vision_tower.blocks.2.4.channel_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v6c_f1b
+  Full Name: vision_tower.blocks.2.4.channel_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v6c_f2w
+  Full Name: vision_tower.blocks.2.4.channel_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v6c_f2b
+  Full Name: vision_tower.blocks.2.4.channel_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7s_c1w
+  Full Name: vision_tower.blocks.2.5.spatial_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v7s_c1b
+  Full Name: vision_tower.blocks.2.5.spatial_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7s_nw
+  Full Name: vision_tower.blocks.2.5.spatial_block.window_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7s_nb
+  Full Name: vision_tower.blocks.2.5.spatial_block.window_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7s_qkvw
+  Full Name: vision_tower.blocks.2.5.spatial_block.window_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v7s_qkvb
+  Full Name: vision_tower.blocks.2.5.spatial_block.window_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v7s_pw
+  Full Name: vision_tower.blocks.2.5.spatial_block.window_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v7s_pb
+  Full Name: vision_tower.blocks.2.5.spatial_block.window_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7s_c2w
+  Full Name: vision_tower.blocks.2.5.spatial_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v7s_c2b
+  Full Name: vision_tower.blocks.2.5.spatial_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7s_fnw
+  Full Name: vision_tower.blocks.2.5.spatial_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7s_fnb
+  Full Name: vision_tower.blocks.2.5.spatial_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7s_f1w
+  Full Name: vision_tower.blocks.2.5.spatial_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v7s_f1b
+  Full Name: vision_tower.blocks.2.5.spatial_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v7s_f2w
+  Full Name: vision_tower.blocks.2.5.spatial_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v7s_f2b
+  Full Name: vision_tower.blocks.2.5.spatial_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7c_c1w
+  Full Name: vision_tower.blocks.2.5.channel_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v7c_c1b
+  Full Name: vision_tower.blocks.2.5.channel_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7c_nw
+  Full Name: vision_tower.blocks.2.5.channel_block.channel_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7c_nb
+  Full Name: vision_tower.blocks.2.5.channel_block.channel_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7c_qkvw
+  Full Name: vision_tower.blocks.2.5.channel_block.channel_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v7c_qkvb
+  Full Name: vision_tower.blocks.2.5.channel_block.channel_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v7c_pw
+  Full Name: vision_tower.blocks.2.5.channel_block.channel_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v7c_pb
+  Full Name: vision_tower.blocks.2.5.channel_block.channel_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7c_c2w
+  Full Name: vision_tower.blocks.2.5.channel_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v7c_c2b
+  Full Name: vision_tower.blocks.2.5.channel_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7c_fnw
+  Full Name: vision_tower.blocks.2.5.channel_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7c_fnb
+  Full Name: vision_tower.blocks.2.5.channel_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v7c_f1w
+  Full Name: vision_tower.blocks.2.5.channel_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v7c_f1b
+  Full Name: vision_tower.blocks.2.5.channel_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v7c_f2w
+  Full Name: vision_tower.blocks.2.5.channel_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v7c_f2b
+  Full Name: vision_tower.blocks.2.5.channel_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8s_c1w
+  Full Name: vision_tower.blocks.2.6.spatial_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v8s_c1b
+  Full Name: vision_tower.blocks.2.6.spatial_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8s_nw
+  Full Name: vision_tower.blocks.2.6.spatial_block.window_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8s_nb
+  Full Name: vision_tower.blocks.2.6.spatial_block.window_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8s_qkvw
+  Full Name: vision_tower.blocks.2.6.spatial_block.window_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v8s_qkvb
+  Full Name: vision_tower.blocks.2.6.spatial_block.window_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v8s_pw
+  Full Name: vision_tower.blocks.2.6.spatial_block.window_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v8s_pb
+  Full Name: vision_tower.blocks.2.6.spatial_block.window_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8s_c2w
+  Full Name: vision_tower.blocks.2.6.spatial_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v8s_c2b
+  Full Name: vision_tower.blocks.2.6.spatial_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8s_fnw
+  Full Name: vision_tower.blocks.2.6.spatial_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8s_fnb
+  Full Name: vision_tower.blocks.2.6.spatial_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8s_f1w
+  Full Name: vision_tower.blocks.2.6.spatial_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v8s_f1b
+  Full Name: vision_tower.blocks.2.6.spatial_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v8s_f2w
+  Full Name: vision_tower.blocks.2.6.spatial_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v8s_f2b
+  Full Name: vision_tower.blocks.2.6.spatial_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8c_c1w
+  Full Name: vision_tower.blocks.2.6.channel_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v8c_c1b
+  Full Name: vision_tower.blocks.2.6.channel_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8c_nw
+  Full Name: vision_tower.blocks.2.6.channel_block.channel_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8c_nb
+  Full Name: vision_tower.blocks.2.6.channel_block.channel_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8c_qkvw
+  Full Name: vision_tower.blocks.2.6.channel_block.channel_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v8c_qkvb
+  Full Name: vision_tower.blocks.2.6.channel_block.channel_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v8c_pw
+  Full Name: vision_tower.blocks.2.6.channel_block.channel_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v8c_pb
+  Full Name: vision_tower.blocks.2.6.channel_block.channel_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8c_c2w
+  Full Name: vision_tower.blocks.2.6.channel_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v8c_c2b
+  Full Name: vision_tower.blocks.2.6.channel_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8c_fnw
+  Full Name: vision_tower.blocks.2.6.channel_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8c_fnb
+  Full Name: vision_tower.blocks.2.6.channel_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v8c_f1w
+  Full Name: vision_tower.blocks.2.6.channel_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v8c_f1b
+  Full Name: vision_tower.blocks.2.6.channel_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v8c_f2w
+  Full Name: vision_tower.blocks.2.6.channel_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v8c_f2b
+  Full Name: vision_tower.blocks.2.6.channel_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9s_c1w
+  Full Name: vision_tower.blocks.2.7.spatial_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v9s_c1b
+  Full Name: vision_tower.blocks.2.7.spatial_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9s_nw
+  Full Name: vision_tower.blocks.2.7.spatial_block.window_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9s_nb
+  Full Name: vision_tower.blocks.2.7.spatial_block.window_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9s_qkvw
+  Full Name: vision_tower.blocks.2.7.spatial_block.window_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v9s_qkvb
+  Full Name: vision_tower.blocks.2.7.spatial_block.window_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v9s_pw
+  Full Name: vision_tower.blocks.2.7.spatial_block.window_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v9s_pb
+  Full Name: vision_tower.blocks.2.7.spatial_block.window_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9s_c2w
+  Full Name: vision_tower.blocks.2.7.spatial_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v9s_c2b
+  Full Name: vision_tower.blocks.2.7.spatial_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9s_fnw
+  Full Name: vision_tower.blocks.2.7.spatial_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9s_fnb
+  Full Name: vision_tower.blocks.2.7.spatial_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9s_f1w
+  Full Name: vision_tower.blocks.2.7.spatial_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v9s_f1b
+  Full Name: vision_tower.blocks.2.7.spatial_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v9s_f2w
+  Full Name: vision_tower.blocks.2.7.spatial_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v9s_f2b
+  Full Name: vision_tower.blocks.2.7.spatial_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9c_c1w
+  Full Name: vision_tower.blocks.2.7.channel_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v9c_c1b
+  Full Name: vision_tower.blocks.2.7.channel_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9c_nw
+  Full Name: vision_tower.blocks.2.7.channel_block.channel_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9c_nb
+  Full Name: vision_tower.blocks.2.7.channel_block.channel_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9c_qkvw
+  Full Name: vision_tower.blocks.2.7.channel_block.channel_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v9c_qkvb
+  Full Name: vision_tower.blocks.2.7.channel_block.channel_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v9c_pw
+  Full Name: vision_tower.blocks.2.7.channel_block.channel_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v9c_pb
+  Full Name: vision_tower.blocks.2.7.channel_block.channel_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9c_c2w
+  Full Name: vision_tower.blocks.2.7.channel_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v9c_c2b
+  Full Name: vision_tower.blocks.2.7.channel_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9c_fnw
+  Full Name: vision_tower.blocks.2.7.channel_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9c_fnb
+  Full Name: vision_tower.blocks.2.7.channel_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v9c_f1w
+  Full Name: vision_tower.blocks.2.7.channel_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v9c_f1b
+  Full Name: vision_tower.blocks.2.7.channel_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v9c_f2w
+  Full Name: vision_tower.blocks.2.7.channel_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v9c_f2b
+  Full Name: vision_tower.blocks.2.7.channel_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10s_c1w
+  Full Name: vision_tower.blocks.2.8.spatial_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v10s_c1b
+  Full Name: vision_tower.blocks.2.8.spatial_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10s_nw
+  Full Name: vision_tower.blocks.2.8.spatial_block.window_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10s_nb
+  Full Name: vision_tower.blocks.2.8.spatial_block.window_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10s_qkvw
+  Full Name: vision_tower.blocks.2.8.spatial_block.window_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v10s_qkvb
+  Full Name: vision_tower.blocks.2.8.spatial_block.window_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v10s_pw
+  Full Name: vision_tower.blocks.2.8.spatial_block.window_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v10s_pb
+  Full Name: vision_tower.blocks.2.8.spatial_block.window_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10s_c2w
+  Full Name: vision_tower.blocks.2.8.spatial_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v10s_c2b
+  Full Name: vision_tower.blocks.2.8.spatial_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10s_fnw
+  Full Name: vision_tower.blocks.2.8.spatial_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10s_fnb
+  Full Name: vision_tower.blocks.2.8.spatial_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10s_f1w
+  Full Name: vision_tower.blocks.2.8.spatial_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v10s_f1b
+  Full Name: vision_tower.blocks.2.8.spatial_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v10s_f2w
+  Full Name: vision_tower.blocks.2.8.spatial_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v10s_f2b
+  Full Name: vision_tower.blocks.2.8.spatial_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10c_c1w
+  Full Name: vision_tower.blocks.2.8.channel_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v10c_c1b
+  Full Name: vision_tower.blocks.2.8.channel_block.conv1.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10c_nw
+  Full Name: vision_tower.blocks.2.8.channel_block.channel_attn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10c_nb
+  Full Name: vision_tower.blocks.2.8.channel_block.channel_attn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10c_qkvw
+  Full Name: vision_tower.blocks.2.8.channel_block.channel_attn.fn.qkv.weight
+  Shape: [1024, 3072, 1, 1]
+  Type: float16
+  Elements: 3145728
+
+Tensor: v10c_qkvb
+  Full Name: vision_tower.blocks.2.8.channel_block.channel_attn.fn.qkv.bias
+  Shape: [3072, 1, 1, 1]
+  Type: float16
+  Elements: 3072
+
+Tensor: v10c_pw
+  Full Name: vision_tower.blocks.2.8.channel_block.channel_attn.fn.proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: v10c_pb
+  Full Name: vision_tower.blocks.2.8.channel_block.channel_attn.fn.proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10c_c2w
+  Full Name: vision_tower.blocks.2.8.channel_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 1024]
+  Type: float16
+  Elements: 9216
+
+Tensor: v10c_c2b
+  Full Name: vision_tower.blocks.2.8.channel_block.conv2.fn.dw.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10c_fnw
+  Full Name: vision_tower.blocks.2.8.channel_block.ffn.norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10c_fnb
+  Full Name: vision_tower.blocks.2.8.channel_block.ffn.norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v10c_f1w
+  Full Name: vision_tower.blocks.2.8.channel_block.ffn.fn.net.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v10c_f1b
+  Full Name: vision_tower.blocks.2.8.channel_block.ffn.fn.net.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: v10c_f2w
+  Full Name: vision_tower.blocks.2.8.channel_block.ffn.fn.net.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v10c_f2b
+  Full Name: vision_tower.blocks.2.8.channel_block.ffn.fn.net.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v11s_c1w
+  Full Name: vision_tower.blocks.3.0.spatial_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 2048]
+  Type: float16
+  Elements: 18432
+
+Tensor: v11s_c1b
+  Full Name: vision_tower.blocks.3.0.spatial_block.conv1.fn.dw.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11s_nw
+  Full Name: vision_tower.blocks.3.0.spatial_block.window_attn.norm.weight
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11s_nb
+  Full Name: vision_tower.blocks.3.0.spatial_block.window_attn.norm.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11s_qkvw
+  Full Name: vision_tower.blocks.3.0.spatial_block.window_attn.fn.qkv.weight
+  Shape: [2048, 6144, 1, 1]
+  Type: float16
+  Elements: 12582912
+
+Tensor: v11s_qkvb
+  Full Name: vision_tower.blocks.3.0.spatial_block.window_attn.fn.qkv.bias
+  Shape: [6144, 1, 1, 1]
+  Type: float16
+  Elements: 6144
+
+Tensor: v11s_pw
+  Full Name: vision_tower.blocks.3.0.spatial_block.window_attn.fn.proj.weight
+  Shape: [2048, 2048, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v11s_pb
+  Full Name: vision_tower.blocks.3.0.spatial_block.window_attn.fn.proj.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11s_c2w
+  Full Name: vision_tower.blocks.3.0.spatial_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 2048]
+  Type: float16
+  Elements: 18432
+
+Tensor: v11s_c2b
+  Full Name: vision_tower.blocks.3.0.spatial_block.conv2.fn.dw.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11s_fnw
+  Full Name: vision_tower.blocks.3.0.spatial_block.ffn.norm.weight
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11s_fnb
+  Full Name: vision_tower.blocks.3.0.spatial_block.ffn.norm.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11s_f1w
+  Full Name: vision_tower.blocks.3.0.spatial_block.ffn.fn.net.fc1.weight
+  Shape: [2048, 8192, 1, 1]
+  Type: float16
+  Elements: 16777216
+
+Tensor: v11s_f1b
+  Full Name: vision_tower.blocks.3.0.spatial_block.ffn.fn.net.fc1.bias
+  Shape: [8192, 1, 1, 1]
+  Type: float16
+  Elements: 8192
+
+Tensor: v11s_f2w
+  Full Name: vision_tower.blocks.3.0.spatial_block.ffn.fn.net.fc2.weight
+  Shape: [8192, 2048, 1, 1]
+  Type: float16
+  Elements: 16777216
+
+Tensor: v11s_f2b
+  Full Name: vision_tower.blocks.3.0.spatial_block.ffn.fn.net.fc2.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11c_c1w
+  Full Name: vision_tower.blocks.3.0.channel_block.conv1.fn.dw.weight
+  Shape: [3, 3, 1, 2048]
+  Type: float16
+  Elements: 18432
+
+Tensor: v11c_c1b
+  Full Name: vision_tower.blocks.3.0.channel_block.conv1.fn.dw.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11c_nw
+  Full Name: vision_tower.blocks.3.0.channel_block.channel_attn.norm.weight
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11c_nb
+  Full Name: vision_tower.blocks.3.0.channel_block.channel_attn.norm.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11c_qkvw
+  Full Name: vision_tower.blocks.3.0.channel_block.channel_attn.fn.qkv.weight
+  Shape: [2048, 6144, 1, 1]
+  Type: float16
+  Elements: 12582912
+
+Tensor: v11c_qkvb
+  Full Name: vision_tower.blocks.3.0.channel_block.channel_attn.fn.qkv.bias
+  Shape: [6144, 1, 1, 1]
+  Type: float16
+  Elements: 6144
+
+Tensor: v11c_pw
+  Full Name: vision_tower.blocks.3.0.channel_block.channel_attn.fn.proj.weight
+  Shape: [2048, 2048, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: v11c_pb
+  Full Name: vision_tower.blocks.3.0.channel_block.channel_attn.fn.proj.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11c_c2w
+  Full Name: vision_tower.blocks.3.0.channel_block.conv2.fn.dw.weight
+  Shape: [3, 3, 1, 2048]
+  Type: float16
+  Elements: 18432
+
+Tensor: v11c_c2b
+  Full Name: vision_tower.blocks.3.0.channel_block.conv2.fn.dw.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11c_fnw
+  Full Name: vision_tower.blocks.3.0.channel_block.ffn.norm.weight
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11c_fnb
+  Full Name: vision_tower.blocks.3.0.channel_block.ffn.norm.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v11c_f1w
+  Full Name: vision_tower.blocks.3.0.channel_block.ffn.fn.net.fc1.weight
+  Shape: [2048, 8192, 1, 1]
+  Type: float16
+  Elements: 16777216
+
+Tensor: v11c_f1b
+  Full Name: vision_tower.blocks.3.0.channel_block.ffn.fn.net.fc1.bias
+  Shape: [8192, 1, 1, 1]
+  Type: float16
+  Elements: 8192
+
+Tensor: v11c_f2w
+  Full Name: vision_tower.blocks.3.0.channel_block.ffn.fn.net.fc2.weight
+  Shape: [8192, 2048, 1, 1]
+  Type: float16
+  Elements: 16777216
+
+Tensor: v11c_f2b
+  Full Name: vision_tower.blocks.3.0.channel_block.ffn.fn.net.fc2.bias
+  Shape: [2048, 1, 1, 1]
+  Type: float16
+  Elements: 2048
+
+Tensor: v_pn_w
+  Full Name: image_proj_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v_pn_b
+  Full Name: image_proj_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: v_pos_row_w
+  Full Name: image_pos_embed.row_embeddings.weight
+  Shape: [1024, 50, 1, 1]
+  Type: float16
+  Elements: 51200
+
+Tensor: v_pos_col_w
+  Full Name: image_pos_embed.column_embeddings.weight
+  Shape: [1024, 50, 1, 1]
+  Type: float16
+  Elements: 51200
+
+Tensor: v_temp_w
+  Full Name: visual_temporal_embed.pos_idx_to_embed
+  Shape: [2048, 100, 1, 1]
+  Type: float16
+  Elements: 204800
+
+Tensor: t_logits_b
+  Full Name: language_model.final_logits_bias
+  Shape: [51289, 1, 1, 1]
+  Type: float16
+  Elements: 51289
+
+Tensor: t_shared_w
+  Full Name: language_model.model.shared.weight
+  Shape: [1024, 51289, 1, 1]
+  Type: float16
+  Elements: 52519936
+
+Tensor: t_enc_embd_w
+  Full Name: language_model.model.encoder.embed_tokens.weight
+  Shape: [1024, 51289, 1, 1]
+  Type: float16
+  Elements: 52519936
+
+Tensor: t_enc_pos_w
+  Full Name: language_model.model.encoder.embed_positions.weight
+  Shape: [1024, 1026, 1, 1]
+  Type: float16
+  Elements: 1050624
+
+Tensor: te0a_kw
+  Full Name: language_model.model.encoder.layers.0.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te0a_kb
+  Full Name: language_model.model.encoder.layers.0.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te0a_vw
+  Full Name: language_model.model.encoder.layers.0.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te0a_vb
+  Full Name: language_model.model.encoder.layers.0.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te0a_qw
+  Full Name: language_model.model.encoder.layers.0.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te0a_qb
+  Full Name: language_model.model.encoder.layers.0.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te0a_ow
+  Full Name: language_model.model.encoder.layers.0.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te0a_ob
+  Full Name: language_model.model.encoder.layers.0.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te0a_nw
+  Full Name: language_model.model.encoder.layers.0.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te0a_nb
+  Full Name: language_model.model.encoder.layers.0.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te0f_upw
+  Full Name: language_model.model.encoder.layers.0.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te0f_upb
+  Full Name: language_model.model.encoder.layers.0.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: te0f_dnw
+  Full Name: language_model.model.encoder.layers.0.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te0f_dnb
+  Full Name: language_model.model.encoder.layers.0.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te0f_nw
+  Full Name: language_model.model.encoder.layers.0.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te0f_nb
+  Full Name: language_model.model.encoder.layers.0.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te1a_kw
+  Full Name: language_model.model.encoder.layers.1.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te1a_kb
+  Full Name: language_model.model.encoder.layers.1.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te1a_vw
+  Full Name: language_model.model.encoder.layers.1.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te1a_vb
+  Full Name: language_model.model.encoder.layers.1.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te1a_qw
+  Full Name: language_model.model.encoder.layers.1.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te1a_qb
+  Full Name: language_model.model.encoder.layers.1.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te1a_ow
+  Full Name: language_model.model.encoder.layers.1.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te1a_ob
+  Full Name: language_model.model.encoder.layers.1.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te1a_nw
+  Full Name: language_model.model.encoder.layers.1.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te1a_nb
+  Full Name: language_model.model.encoder.layers.1.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te1f_upw
+  Full Name: language_model.model.encoder.layers.1.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te1f_upb
+  Full Name: language_model.model.encoder.layers.1.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: te1f_dnw
+  Full Name: language_model.model.encoder.layers.1.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te1f_dnb
+  Full Name: language_model.model.encoder.layers.1.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te1f_nw
+  Full Name: language_model.model.encoder.layers.1.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te1f_nb
+  Full Name: language_model.model.encoder.layers.1.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te2a_kw
+  Full Name: language_model.model.encoder.layers.2.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te2a_kb
+  Full Name: language_model.model.encoder.layers.2.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te2a_vw
+  Full Name: language_model.model.encoder.layers.2.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te2a_vb
+  Full Name: language_model.model.encoder.layers.2.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te2a_qw
+  Full Name: language_model.model.encoder.layers.2.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te2a_qb
+  Full Name: language_model.model.encoder.layers.2.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te2a_ow
+  Full Name: language_model.model.encoder.layers.2.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te2a_ob
+  Full Name: language_model.model.encoder.layers.2.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te2a_nw
+  Full Name: language_model.model.encoder.layers.2.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te2a_nb
+  Full Name: language_model.model.encoder.layers.2.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te2f_upw
+  Full Name: language_model.model.encoder.layers.2.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te2f_upb
+  Full Name: language_model.model.encoder.layers.2.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: te2f_dnw
+  Full Name: language_model.model.encoder.layers.2.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te2f_dnb
+  Full Name: language_model.model.encoder.layers.2.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te2f_nw
+  Full Name: language_model.model.encoder.layers.2.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te2f_nb
+  Full Name: language_model.model.encoder.layers.2.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te3a_kw
+  Full Name: language_model.model.encoder.layers.3.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te3a_kb
+  Full Name: language_model.model.encoder.layers.3.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te3a_vw
+  Full Name: language_model.model.encoder.layers.3.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te3a_vb
+  Full Name: language_model.model.encoder.layers.3.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te3a_qw
+  Full Name: language_model.model.encoder.layers.3.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te3a_qb
+  Full Name: language_model.model.encoder.layers.3.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te3a_ow
+  Full Name: language_model.model.encoder.layers.3.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te3a_ob
+  Full Name: language_model.model.encoder.layers.3.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te3a_nw
+  Full Name: language_model.model.encoder.layers.3.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te3a_nb
+  Full Name: language_model.model.encoder.layers.3.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te3f_upw
+  Full Name: language_model.model.encoder.layers.3.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te3f_upb
+  Full Name: language_model.model.encoder.layers.3.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: te3f_dnw
+  Full Name: language_model.model.encoder.layers.3.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te3f_dnb
+  Full Name: language_model.model.encoder.layers.3.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te3f_nw
+  Full Name: language_model.model.encoder.layers.3.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te3f_nb
+  Full Name: language_model.model.encoder.layers.3.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te4a_kw
+  Full Name: language_model.model.encoder.layers.4.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te4a_kb
+  Full Name: language_model.model.encoder.layers.4.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te4a_vw
+  Full Name: language_model.model.encoder.layers.4.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te4a_vb
+  Full Name: language_model.model.encoder.layers.4.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te4a_qw
+  Full Name: language_model.model.encoder.layers.4.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te4a_qb
+  Full Name: language_model.model.encoder.layers.4.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te4a_ow
+  Full Name: language_model.model.encoder.layers.4.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te4a_ob
+  Full Name: language_model.model.encoder.layers.4.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te4a_nw
+  Full Name: language_model.model.encoder.layers.4.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te4a_nb
+  Full Name: language_model.model.encoder.layers.4.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te4f_upw
+  Full Name: language_model.model.encoder.layers.4.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te4f_upb
+  Full Name: language_model.model.encoder.layers.4.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: te4f_dnw
+  Full Name: language_model.model.encoder.layers.4.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te4f_dnb
+  Full Name: language_model.model.encoder.layers.4.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te4f_nw
+  Full Name: language_model.model.encoder.layers.4.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te4f_nb
+  Full Name: language_model.model.encoder.layers.4.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te5a_kw
+  Full Name: language_model.model.encoder.layers.5.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te5a_kb
+  Full Name: language_model.model.encoder.layers.5.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te5a_vw
+  Full Name: language_model.model.encoder.layers.5.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te5a_vb
+  Full Name: language_model.model.encoder.layers.5.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te5a_qw
+  Full Name: language_model.model.encoder.layers.5.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te5a_qb
+  Full Name: language_model.model.encoder.layers.5.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te5a_ow
+  Full Name: language_model.model.encoder.layers.5.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te5a_ob
+  Full Name: language_model.model.encoder.layers.5.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te5a_nw
+  Full Name: language_model.model.encoder.layers.5.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te5a_nb
+  Full Name: language_model.model.encoder.layers.5.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te5f_upw
+  Full Name: language_model.model.encoder.layers.5.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te5f_upb
+  Full Name: language_model.model.encoder.layers.5.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: te5f_dnw
+  Full Name: language_model.model.encoder.layers.5.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te5f_dnb
+  Full Name: language_model.model.encoder.layers.5.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te5f_nw
+  Full Name: language_model.model.encoder.layers.5.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te5f_nb
+  Full Name: language_model.model.encoder.layers.5.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te6a_kw
+  Full Name: language_model.model.encoder.layers.6.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te6a_kb
+  Full Name: language_model.model.encoder.layers.6.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te6a_vw
+  Full Name: language_model.model.encoder.layers.6.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te6a_vb
+  Full Name: language_model.model.encoder.layers.6.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te6a_qw
+  Full Name: language_model.model.encoder.layers.6.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te6a_qb
+  Full Name: language_model.model.encoder.layers.6.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te6a_ow
+  Full Name: language_model.model.encoder.layers.6.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te6a_ob
+  Full Name: language_model.model.encoder.layers.6.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te6a_nw
+  Full Name: language_model.model.encoder.layers.6.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te6a_nb
+  Full Name: language_model.model.encoder.layers.6.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te6f_upw
+  Full Name: language_model.model.encoder.layers.6.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te6f_upb
+  Full Name: language_model.model.encoder.layers.6.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: te6f_dnw
+  Full Name: language_model.model.encoder.layers.6.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te6f_dnb
+  Full Name: language_model.model.encoder.layers.6.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te6f_nw
+  Full Name: language_model.model.encoder.layers.6.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te6f_nb
+  Full Name: language_model.model.encoder.layers.6.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te7a_kw
+  Full Name: language_model.model.encoder.layers.7.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te7a_kb
+  Full Name: language_model.model.encoder.layers.7.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te7a_vw
+  Full Name: language_model.model.encoder.layers.7.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te7a_vb
+  Full Name: language_model.model.encoder.layers.7.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te7a_qw
+  Full Name: language_model.model.encoder.layers.7.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te7a_qb
+  Full Name: language_model.model.encoder.layers.7.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te7a_ow
+  Full Name: language_model.model.encoder.layers.7.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te7a_ob
+  Full Name: language_model.model.encoder.layers.7.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te7a_nw
+  Full Name: language_model.model.encoder.layers.7.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te7a_nb
+  Full Name: language_model.model.encoder.layers.7.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te7f_upw
+  Full Name: language_model.model.encoder.layers.7.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te7f_upb
+  Full Name: language_model.model.encoder.layers.7.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: te7f_dnw
+  Full Name: language_model.model.encoder.layers.7.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te7f_dnb
+  Full Name: language_model.model.encoder.layers.7.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te7f_nw
+  Full Name: language_model.model.encoder.layers.7.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te7f_nb
+  Full Name: language_model.model.encoder.layers.7.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te8a_kw
+  Full Name: language_model.model.encoder.layers.8.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te8a_kb
+  Full Name: language_model.model.encoder.layers.8.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te8a_vw
+  Full Name: language_model.model.encoder.layers.8.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te8a_vb
+  Full Name: language_model.model.encoder.layers.8.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te8a_qw
+  Full Name: language_model.model.encoder.layers.8.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te8a_qb
+  Full Name: language_model.model.encoder.layers.8.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te8a_ow
+  Full Name: language_model.model.encoder.layers.8.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te8a_ob
+  Full Name: language_model.model.encoder.layers.8.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te8a_nw
+  Full Name: language_model.model.encoder.layers.8.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te8a_nb
+  Full Name: language_model.model.encoder.layers.8.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te8f_upw
+  Full Name: language_model.model.encoder.layers.8.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te8f_upb
+  Full Name: language_model.model.encoder.layers.8.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: te8f_dnw
+  Full Name: language_model.model.encoder.layers.8.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te8f_dnb
+  Full Name: language_model.model.encoder.layers.8.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te8f_nw
+  Full Name: language_model.model.encoder.layers.8.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te8f_nb
+  Full Name: language_model.model.encoder.layers.8.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te9a_kw
+  Full Name: language_model.model.encoder.layers.9.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te9a_kb
+  Full Name: language_model.model.encoder.layers.9.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te9a_vw
+  Full Name: language_model.model.encoder.layers.9.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te9a_vb
+  Full Name: language_model.model.encoder.layers.9.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te9a_qw
+  Full Name: language_model.model.encoder.layers.9.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te9a_qb
+  Full Name: language_model.model.encoder.layers.9.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te9a_ow
+  Full Name: language_model.model.encoder.layers.9.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te9a_ob
+  Full Name: language_model.model.encoder.layers.9.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te9a_nw
+  Full Name: language_model.model.encoder.layers.9.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te9a_nb
+  Full Name: language_model.model.encoder.layers.9.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te9f_upw
+  Full Name: language_model.model.encoder.layers.9.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te9f_upb
+  Full Name: language_model.model.encoder.layers.9.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: te9f_dnw
+  Full Name: language_model.model.encoder.layers.9.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te9f_dnb
+  Full Name: language_model.model.encoder.layers.9.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te9f_nw
+  Full Name: language_model.model.encoder.layers.9.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te9f_nb
+  Full Name: language_model.model.encoder.layers.9.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te10a_kw
+  Full Name: language_model.model.encoder.layers.10.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te10a_kb
+  Full Name: language_model.model.encoder.layers.10.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te10a_vw
+  Full Name: language_model.model.encoder.layers.10.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te10a_vb
+  Full Name: language_model.model.encoder.layers.10.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te10a_qw
+  Full Name: language_model.model.encoder.layers.10.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te10a_qb
+  Full Name: language_model.model.encoder.layers.10.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te10a_ow
+  Full Name: language_model.model.encoder.layers.10.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te10a_ob
+  Full Name: language_model.model.encoder.layers.10.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te10a_nw
+  Full Name: language_model.model.encoder.layers.10.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te10a_nb
+  Full Name: language_model.model.encoder.layers.10.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te10f_upw
+  Full Name: language_model.model.encoder.layers.10.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te10f_upb
+  Full Name: language_model.model.encoder.layers.10.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: te10f_dnw
+  Full Name: language_model.model.encoder.layers.10.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te10f_dnb
+  Full Name: language_model.model.encoder.layers.10.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te10f_nw
+  Full Name: language_model.model.encoder.layers.10.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te10f_nb
+  Full Name: language_model.model.encoder.layers.10.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te11a_kw
+  Full Name: language_model.model.encoder.layers.11.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te11a_kb
+  Full Name: language_model.model.encoder.layers.11.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te11a_vw
+  Full Name: language_model.model.encoder.layers.11.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te11a_vb
+  Full Name: language_model.model.encoder.layers.11.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te11a_qw
+  Full Name: language_model.model.encoder.layers.11.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te11a_qb
+  Full Name: language_model.model.encoder.layers.11.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te11a_ow
+  Full Name: language_model.model.encoder.layers.11.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: te11a_ob
+  Full Name: language_model.model.encoder.layers.11.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te11a_nw
+  Full Name: language_model.model.encoder.layers.11.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te11a_nb
+  Full Name: language_model.model.encoder.layers.11.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te11f_upw
+  Full Name: language_model.model.encoder.layers.11.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te11f_upb
+  Full Name: language_model.model.encoder.layers.11.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: te11f_dnw
+  Full Name: language_model.model.encoder.layers.11.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: te11f_dnb
+  Full Name: language_model.model.encoder.layers.11.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te11f_nw
+  Full Name: language_model.model.encoder.layers.11.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: te11f_nb
+  Full Name: language_model.model.encoder.layers.11.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t_enc_lnorm_w
+  Full Name: language_model.model.encoder.layernorm_embedding.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t_enc_lnorm_b
+  Full Name: language_model.model.encoder.layernorm_embedding.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t_embd_w
+  Full Name: language_model.model.decoder.embed_tokens.weight
+  Shape: [1024, 51289, 1, 1]
+  Type: float16
+  Elements: 52519936
+
+Tensor: t_pos_w
+  Full Name: language_model.model.decoder.embed_positions.weight
+  Shape: [1024, 1026, 1, 1]
+  Type: float16
+  Elements: 1050624
+
+Tensor: t0a_kw
+  Full Name: language_model.model.decoder.layers.0.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t0a_kb
+  Full Name: language_model.model.decoder.layers.0.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t0a_vw
+  Full Name: language_model.model.decoder.layers.0.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t0a_vb
+  Full Name: language_model.model.decoder.layers.0.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t0a_qw
+  Full Name: language_model.model.decoder.layers.0.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t0a_qb
+  Full Name: language_model.model.decoder.layers.0.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t0a_ow
+  Full Name: language_model.model.decoder.layers.0.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t0a_ob
+  Full Name: language_model.model.decoder.layers.0.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t0a_nw
+  Full Name: language_model.model.decoder.layers.0.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t0a_nb
+  Full Name: language_model.model.decoder.layers.0.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t0c_kw
+  Full Name: language_model.model.decoder.layers.0.encoder_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t0c_kb
+  Full Name: language_model.model.decoder.layers.0.encoder_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t0c_vw
+  Full Name: language_model.model.decoder.layers.0.encoder_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t0c_vb
+  Full Name: language_model.model.decoder.layers.0.encoder_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t0c_qw
+  Full Name: language_model.model.decoder.layers.0.encoder_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t0c_qb
+  Full Name: language_model.model.decoder.layers.0.encoder_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t0c_ow
+  Full Name: language_model.model.decoder.layers.0.encoder_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t0c_ob
+  Full Name: language_model.model.decoder.layers.0.encoder_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t0c_nw
+  Full Name: language_model.model.decoder.layers.0.encoder_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t0c_nb
+  Full Name: language_model.model.decoder.layers.0.encoder_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t0f_upw
+  Full Name: language_model.model.decoder.layers.0.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t0f_upb
+  Full Name: language_model.model.decoder.layers.0.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: t0f_dnw
+  Full Name: language_model.model.decoder.layers.0.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t0f_dnb
+  Full Name: language_model.model.decoder.layers.0.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t0f_nw
+  Full Name: language_model.model.decoder.layers.0.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t0f_nb
+  Full Name: language_model.model.decoder.layers.0.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1a_kw
+  Full Name: language_model.model.decoder.layers.1.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t1a_kb
+  Full Name: language_model.model.decoder.layers.1.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1a_vw
+  Full Name: language_model.model.decoder.layers.1.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t1a_vb
+  Full Name: language_model.model.decoder.layers.1.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1a_qw
+  Full Name: language_model.model.decoder.layers.1.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t1a_qb
+  Full Name: language_model.model.decoder.layers.1.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1a_ow
+  Full Name: language_model.model.decoder.layers.1.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t1a_ob
+  Full Name: language_model.model.decoder.layers.1.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1a_nw
+  Full Name: language_model.model.decoder.layers.1.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1a_nb
+  Full Name: language_model.model.decoder.layers.1.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1c_kw
+  Full Name: language_model.model.decoder.layers.1.encoder_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t1c_kb
+  Full Name: language_model.model.decoder.layers.1.encoder_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1c_vw
+  Full Name: language_model.model.decoder.layers.1.encoder_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t1c_vb
+  Full Name: language_model.model.decoder.layers.1.encoder_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1c_qw
+  Full Name: language_model.model.decoder.layers.1.encoder_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t1c_qb
+  Full Name: language_model.model.decoder.layers.1.encoder_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1c_ow
+  Full Name: language_model.model.decoder.layers.1.encoder_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t1c_ob
+  Full Name: language_model.model.decoder.layers.1.encoder_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1c_nw
+  Full Name: language_model.model.decoder.layers.1.encoder_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1c_nb
+  Full Name: language_model.model.decoder.layers.1.encoder_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1f_upw
+  Full Name: language_model.model.decoder.layers.1.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t1f_upb
+  Full Name: language_model.model.decoder.layers.1.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: t1f_dnw
+  Full Name: language_model.model.decoder.layers.1.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t1f_dnb
+  Full Name: language_model.model.decoder.layers.1.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1f_nw
+  Full Name: language_model.model.decoder.layers.1.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t1f_nb
+  Full Name: language_model.model.decoder.layers.1.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2a_kw
+  Full Name: language_model.model.decoder.layers.2.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t2a_kb
+  Full Name: language_model.model.decoder.layers.2.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2a_vw
+  Full Name: language_model.model.decoder.layers.2.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t2a_vb
+  Full Name: language_model.model.decoder.layers.2.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2a_qw
+  Full Name: language_model.model.decoder.layers.2.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t2a_qb
+  Full Name: language_model.model.decoder.layers.2.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2a_ow
+  Full Name: language_model.model.decoder.layers.2.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t2a_ob
+  Full Name: language_model.model.decoder.layers.2.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2a_nw
+  Full Name: language_model.model.decoder.layers.2.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2a_nb
+  Full Name: language_model.model.decoder.layers.2.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2c_kw
+  Full Name: language_model.model.decoder.layers.2.encoder_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t2c_kb
+  Full Name: language_model.model.decoder.layers.2.encoder_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2c_vw
+  Full Name: language_model.model.decoder.layers.2.encoder_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t2c_vb
+  Full Name: language_model.model.decoder.layers.2.encoder_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2c_qw
+  Full Name: language_model.model.decoder.layers.2.encoder_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t2c_qb
+  Full Name: language_model.model.decoder.layers.2.encoder_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2c_ow
+  Full Name: language_model.model.decoder.layers.2.encoder_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t2c_ob
+  Full Name: language_model.model.decoder.layers.2.encoder_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2c_nw
+  Full Name: language_model.model.decoder.layers.2.encoder_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2c_nb
+  Full Name: language_model.model.decoder.layers.2.encoder_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2f_upw
+  Full Name: language_model.model.decoder.layers.2.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t2f_upb
+  Full Name: language_model.model.decoder.layers.2.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: t2f_dnw
+  Full Name: language_model.model.decoder.layers.2.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t2f_dnb
+  Full Name: language_model.model.decoder.layers.2.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2f_nw
+  Full Name: language_model.model.decoder.layers.2.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t2f_nb
+  Full Name: language_model.model.decoder.layers.2.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3a_kw
+  Full Name: language_model.model.decoder.layers.3.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t3a_kb
+  Full Name: language_model.model.decoder.layers.3.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3a_vw
+  Full Name: language_model.model.decoder.layers.3.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t3a_vb
+  Full Name: language_model.model.decoder.layers.3.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3a_qw
+  Full Name: language_model.model.decoder.layers.3.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t3a_qb
+  Full Name: language_model.model.decoder.layers.3.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3a_ow
+  Full Name: language_model.model.decoder.layers.3.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t3a_ob
+  Full Name: language_model.model.decoder.layers.3.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3a_nw
+  Full Name: language_model.model.decoder.layers.3.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3a_nb
+  Full Name: language_model.model.decoder.layers.3.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3c_kw
+  Full Name: language_model.model.decoder.layers.3.encoder_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t3c_kb
+  Full Name: language_model.model.decoder.layers.3.encoder_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3c_vw
+  Full Name: language_model.model.decoder.layers.3.encoder_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t3c_vb
+  Full Name: language_model.model.decoder.layers.3.encoder_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3c_qw
+  Full Name: language_model.model.decoder.layers.3.encoder_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t3c_qb
+  Full Name: language_model.model.decoder.layers.3.encoder_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3c_ow
+  Full Name: language_model.model.decoder.layers.3.encoder_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t3c_ob
+  Full Name: language_model.model.decoder.layers.3.encoder_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3c_nw
+  Full Name: language_model.model.decoder.layers.3.encoder_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3c_nb
+  Full Name: language_model.model.decoder.layers.3.encoder_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3f_upw
+  Full Name: language_model.model.decoder.layers.3.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t3f_upb
+  Full Name: language_model.model.decoder.layers.3.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: t3f_dnw
+  Full Name: language_model.model.decoder.layers.3.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t3f_dnb
+  Full Name: language_model.model.decoder.layers.3.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3f_nw
+  Full Name: language_model.model.decoder.layers.3.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t3f_nb
+  Full Name: language_model.model.decoder.layers.3.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4a_kw
+  Full Name: language_model.model.decoder.layers.4.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t4a_kb
+  Full Name: language_model.model.decoder.layers.4.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4a_vw
+  Full Name: language_model.model.decoder.layers.4.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t4a_vb
+  Full Name: language_model.model.decoder.layers.4.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4a_qw
+  Full Name: language_model.model.decoder.layers.4.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t4a_qb
+  Full Name: language_model.model.decoder.layers.4.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4a_ow
+  Full Name: language_model.model.decoder.layers.4.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t4a_ob
+  Full Name: language_model.model.decoder.layers.4.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4a_nw
+  Full Name: language_model.model.decoder.layers.4.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4a_nb
+  Full Name: language_model.model.decoder.layers.4.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4c_kw
+  Full Name: language_model.model.decoder.layers.4.encoder_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t4c_kb
+  Full Name: language_model.model.decoder.layers.4.encoder_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4c_vw
+  Full Name: language_model.model.decoder.layers.4.encoder_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t4c_vb
+  Full Name: language_model.model.decoder.layers.4.encoder_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4c_qw
+  Full Name: language_model.model.decoder.layers.4.encoder_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t4c_qb
+  Full Name: language_model.model.decoder.layers.4.encoder_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4c_ow
+  Full Name: language_model.model.decoder.layers.4.encoder_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t4c_ob
+  Full Name: language_model.model.decoder.layers.4.encoder_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4c_nw
+  Full Name: language_model.model.decoder.layers.4.encoder_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4c_nb
+  Full Name: language_model.model.decoder.layers.4.encoder_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4f_upw
+  Full Name: language_model.model.decoder.layers.4.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t4f_upb
+  Full Name: language_model.model.decoder.layers.4.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: t4f_dnw
+  Full Name: language_model.model.decoder.layers.4.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t4f_dnb
+  Full Name: language_model.model.decoder.layers.4.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4f_nw
+  Full Name: language_model.model.decoder.layers.4.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t4f_nb
+  Full Name: language_model.model.decoder.layers.4.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5a_kw
+  Full Name: language_model.model.decoder.layers.5.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t5a_kb
+  Full Name: language_model.model.decoder.layers.5.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5a_vw
+  Full Name: language_model.model.decoder.layers.5.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t5a_vb
+  Full Name: language_model.model.decoder.layers.5.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5a_qw
+  Full Name: language_model.model.decoder.layers.5.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t5a_qb
+  Full Name: language_model.model.decoder.layers.5.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5a_ow
+  Full Name: language_model.model.decoder.layers.5.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t5a_ob
+  Full Name: language_model.model.decoder.layers.5.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5a_nw
+  Full Name: language_model.model.decoder.layers.5.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5a_nb
+  Full Name: language_model.model.decoder.layers.5.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5c_kw
+  Full Name: language_model.model.decoder.layers.5.encoder_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t5c_kb
+  Full Name: language_model.model.decoder.layers.5.encoder_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5c_vw
+  Full Name: language_model.model.decoder.layers.5.encoder_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t5c_vb
+  Full Name: language_model.model.decoder.layers.5.encoder_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5c_qw
+  Full Name: language_model.model.decoder.layers.5.encoder_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t5c_qb
+  Full Name: language_model.model.decoder.layers.5.encoder_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5c_ow
+  Full Name: language_model.model.decoder.layers.5.encoder_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t5c_ob
+  Full Name: language_model.model.decoder.layers.5.encoder_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5c_nw
+  Full Name: language_model.model.decoder.layers.5.encoder_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5c_nb
+  Full Name: language_model.model.decoder.layers.5.encoder_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5f_upw
+  Full Name: language_model.model.decoder.layers.5.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t5f_upb
+  Full Name: language_model.model.decoder.layers.5.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: t5f_dnw
+  Full Name: language_model.model.decoder.layers.5.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t5f_dnb
+  Full Name: language_model.model.decoder.layers.5.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5f_nw
+  Full Name: language_model.model.decoder.layers.5.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t5f_nb
+  Full Name: language_model.model.decoder.layers.5.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6a_kw
+  Full Name: language_model.model.decoder.layers.6.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t6a_kb
+  Full Name: language_model.model.decoder.layers.6.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6a_vw
+  Full Name: language_model.model.decoder.layers.6.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t6a_vb
+  Full Name: language_model.model.decoder.layers.6.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6a_qw
+  Full Name: language_model.model.decoder.layers.6.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t6a_qb
+  Full Name: language_model.model.decoder.layers.6.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6a_ow
+  Full Name: language_model.model.decoder.layers.6.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t6a_ob
+  Full Name: language_model.model.decoder.layers.6.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6a_nw
+  Full Name: language_model.model.decoder.layers.6.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6a_nb
+  Full Name: language_model.model.decoder.layers.6.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6c_kw
+  Full Name: language_model.model.decoder.layers.6.encoder_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t6c_kb
+  Full Name: language_model.model.decoder.layers.6.encoder_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6c_vw
+  Full Name: language_model.model.decoder.layers.6.encoder_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t6c_vb
+  Full Name: language_model.model.decoder.layers.6.encoder_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6c_qw
+  Full Name: language_model.model.decoder.layers.6.encoder_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t6c_qb
+  Full Name: language_model.model.decoder.layers.6.encoder_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6c_ow
+  Full Name: language_model.model.decoder.layers.6.encoder_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t6c_ob
+  Full Name: language_model.model.decoder.layers.6.encoder_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6c_nw
+  Full Name: language_model.model.decoder.layers.6.encoder_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6c_nb
+  Full Name: language_model.model.decoder.layers.6.encoder_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6f_upw
+  Full Name: language_model.model.decoder.layers.6.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t6f_upb
+  Full Name: language_model.model.decoder.layers.6.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: t6f_dnw
+  Full Name: language_model.model.decoder.layers.6.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t6f_dnb
+  Full Name: language_model.model.decoder.layers.6.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6f_nw
+  Full Name: language_model.model.decoder.layers.6.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t6f_nb
+  Full Name: language_model.model.decoder.layers.6.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7a_kw
+  Full Name: language_model.model.decoder.layers.7.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t7a_kb
+  Full Name: language_model.model.decoder.layers.7.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7a_vw
+  Full Name: language_model.model.decoder.layers.7.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t7a_vb
+  Full Name: language_model.model.decoder.layers.7.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7a_qw
+  Full Name: language_model.model.decoder.layers.7.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t7a_qb
+  Full Name: language_model.model.decoder.layers.7.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7a_ow
+  Full Name: language_model.model.decoder.layers.7.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t7a_ob
+  Full Name: language_model.model.decoder.layers.7.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7a_nw
+  Full Name: language_model.model.decoder.layers.7.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7a_nb
+  Full Name: language_model.model.decoder.layers.7.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7c_kw
+  Full Name: language_model.model.decoder.layers.7.encoder_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t7c_kb
+  Full Name: language_model.model.decoder.layers.7.encoder_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7c_vw
+  Full Name: language_model.model.decoder.layers.7.encoder_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t7c_vb
+  Full Name: language_model.model.decoder.layers.7.encoder_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7c_qw
+  Full Name: language_model.model.decoder.layers.7.encoder_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t7c_qb
+  Full Name: language_model.model.decoder.layers.7.encoder_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7c_ow
+  Full Name: language_model.model.decoder.layers.7.encoder_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t7c_ob
+  Full Name: language_model.model.decoder.layers.7.encoder_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7c_nw
+  Full Name: language_model.model.decoder.layers.7.encoder_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7c_nb
+  Full Name: language_model.model.decoder.layers.7.encoder_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7f_upw
+  Full Name: language_model.model.decoder.layers.7.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t7f_upb
+  Full Name: language_model.model.decoder.layers.7.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: t7f_dnw
+  Full Name: language_model.model.decoder.layers.7.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t7f_dnb
+  Full Name: language_model.model.decoder.layers.7.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7f_nw
+  Full Name: language_model.model.decoder.layers.7.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t7f_nb
+  Full Name: language_model.model.decoder.layers.7.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8a_kw
+  Full Name: language_model.model.decoder.layers.8.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t8a_kb
+  Full Name: language_model.model.decoder.layers.8.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8a_vw
+  Full Name: language_model.model.decoder.layers.8.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t8a_vb
+  Full Name: language_model.model.decoder.layers.8.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8a_qw
+  Full Name: language_model.model.decoder.layers.8.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t8a_qb
+  Full Name: language_model.model.decoder.layers.8.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8a_ow
+  Full Name: language_model.model.decoder.layers.8.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t8a_ob
+  Full Name: language_model.model.decoder.layers.8.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8a_nw
+  Full Name: language_model.model.decoder.layers.8.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8a_nb
+  Full Name: language_model.model.decoder.layers.8.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8c_kw
+  Full Name: language_model.model.decoder.layers.8.encoder_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t8c_kb
+  Full Name: language_model.model.decoder.layers.8.encoder_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8c_vw
+  Full Name: language_model.model.decoder.layers.8.encoder_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t8c_vb
+  Full Name: language_model.model.decoder.layers.8.encoder_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8c_qw
+  Full Name: language_model.model.decoder.layers.8.encoder_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t8c_qb
+  Full Name: language_model.model.decoder.layers.8.encoder_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8c_ow
+  Full Name: language_model.model.decoder.layers.8.encoder_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t8c_ob
+  Full Name: language_model.model.decoder.layers.8.encoder_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8c_nw
+  Full Name: language_model.model.decoder.layers.8.encoder_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8c_nb
+  Full Name: language_model.model.decoder.layers.8.encoder_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8f_upw
+  Full Name: language_model.model.decoder.layers.8.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t8f_upb
+  Full Name: language_model.model.decoder.layers.8.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: t8f_dnw
+  Full Name: language_model.model.decoder.layers.8.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t8f_dnb
+  Full Name: language_model.model.decoder.layers.8.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8f_nw
+  Full Name: language_model.model.decoder.layers.8.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t8f_nb
+  Full Name: language_model.model.decoder.layers.8.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9a_kw
+  Full Name: language_model.model.decoder.layers.9.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t9a_kb
+  Full Name: language_model.model.decoder.layers.9.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9a_vw
+  Full Name: language_model.model.decoder.layers.9.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t9a_vb
+  Full Name: language_model.model.decoder.layers.9.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9a_qw
+  Full Name: language_model.model.decoder.layers.9.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t9a_qb
+  Full Name: language_model.model.decoder.layers.9.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9a_ow
+  Full Name: language_model.model.decoder.layers.9.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t9a_ob
+  Full Name: language_model.model.decoder.layers.9.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9a_nw
+  Full Name: language_model.model.decoder.layers.9.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9a_nb
+  Full Name: language_model.model.decoder.layers.9.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9c_kw
+  Full Name: language_model.model.decoder.layers.9.encoder_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t9c_kb
+  Full Name: language_model.model.decoder.layers.9.encoder_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9c_vw
+  Full Name: language_model.model.decoder.layers.9.encoder_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t9c_vb
+  Full Name: language_model.model.decoder.layers.9.encoder_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9c_qw
+  Full Name: language_model.model.decoder.layers.9.encoder_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t9c_qb
+  Full Name: language_model.model.decoder.layers.9.encoder_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9c_ow
+  Full Name: language_model.model.decoder.layers.9.encoder_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t9c_ob
+  Full Name: language_model.model.decoder.layers.9.encoder_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9c_nw
+  Full Name: language_model.model.decoder.layers.9.encoder_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9c_nb
+  Full Name: language_model.model.decoder.layers.9.encoder_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9f_upw
+  Full Name: language_model.model.decoder.layers.9.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t9f_upb
+  Full Name: language_model.model.decoder.layers.9.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: t9f_dnw
+  Full Name: language_model.model.decoder.layers.9.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t9f_dnb
+  Full Name: language_model.model.decoder.layers.9.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9f_nw
+  Full Name: language_model.model.decoder.layers.9.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t9f_nb
+  Full Name: language_model.model.decoder.layers.9.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10a_kw
+  Full Name: language_model.model.decoder.layers.10.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t10a_kb
+  Full Name: language_model.model.decoder.layers.10.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10a_vw
+  Full Name: language_model.model.decoder.layers.10.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t10a_vb
+  Full Name: language_model.model.decoder.layers.10.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10a_qw
+  Full Name: language_model.model.decoder.layers.10.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t10a_qb
+  Full Name: language_model.model.decoder.layers.10.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10a_ow
+  Full Name: language_model.model.decoder.layers.10.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t10a_ob
+  Full Name: language_model.model.decoder.layers.10.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10a_nw
+  Full Name: language_model.model.decoder.layers.10.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10a_nb
+  Full Name: language_model.model.decoder.layers.10.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10c_kw
+  Full Name: language_model.model.decoder.layers.10.encoder_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t10c_kb
+  Full Name: language_model.model.decoder.layers.10.encoder_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10c_vw
+  Full Name: language_model.model.decoder.layers.10.encoder_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t10c_vb
+  Full Name: language_model.model.decoder.layers.10.encoder_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10c_qw
+  Full Name: language_model.model.decoder.layers.10.encoder_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t10c_qb
+  Full Name: language_model.model.decoder.layers.10.encoder_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10c_ow
+  Full Name: language_model.model.decoder.layers.10.encoder_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t10c_ob
+  Full Name: language_model.model.decoder.layers.10.encoder_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10c_nw
+  Full Name: language_model.model.decoder.layers.10.encoder_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10c_nb
+  Full Name: language_model.model.decoder.layers.10.encoder_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10f_upw
+  Full Name: language_model.model.decoder.layers.10.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t10f_upb
+  Full Name: language_model.model.decoder.layers.10.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: t10f_dnw
+  Full Name: language_model.model.decoder.layers.10.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t10f_dnb
+  Full Name: language_model.model.decoder.layers.10.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10f_nw
+  Full Name: language_model.model.decoder.layers.10.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t10f_nb
+  Full Name: language_model.model.decoder.layers.10.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11a_kw
+  Full Name: language_model.model.decoder.layers.11.self_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t11a_kb
+  Full Name: language_model.model.decoder.layers.11.self_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11a_vw
+  Full Name: language_model.model.decoder.layers.11.self_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t11a_vb
+  Full Name: language_model.model.decoder.layers.11.self_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11a_qw
+  Full Name: language_model.model.decoder.layers.11.self_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t11a_qb
+  Full Name: language_model.model.decoder.layers.11.self_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11a_ow
+  Full Name: language_model.model.decoder.layers.11.self_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t11a_ob
+  Full Name: language_model.model.decoder.layers.11.self_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11a_nw
+  Full Name: language_model.model.decoder.layers.11.self_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11a_nb
+  Full Name: language_model.model.decoder.layers.11.self_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11c_kw
+  Full Name: language_model.model.decoder.layers.11.encoder_attn.k_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t11c_kb
+  Full Name: language_model.model.decoder.layers.11.encoder_attn.k_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11c_vw
+  Full Name: language_model.model.decoder.layers.11.encoder_attn.v_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t11c_vb
+  Full Name: language_model.model.decoder.layers.11.encoder_attn.v_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11c_qw
+  Full Name: language_model.model.decoder.layers.11.encoder_attn.q_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t11c_qb
+  Full Name: language_model.model.decoder.layers.11.encoder_attn.q_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11c_ow
+  Full Name: language_model.model.decoder.layers.11.encoder_attn.out_proj.weight
+  Shape: [1024, 1024, 1, 1]
+  Type: float16
+  Elements: 1048576
+
+Tensor: t11c_ob
+  Full Name: language_model.model.decoder.layers.11.encoder_attn.out_proj.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11c_nw
+  Full Name: language_model.model.decoder.layers.11.encoder_attn_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11c_nb
+  Full Name: language_model.model.decoder.layers.11.encoder_attn_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11f_upw
+  Full Name: language_model.model.decoder.layers.11.fc1.weight
+  Shape: [1024, 4096, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t11f_upb
+  Full Name: language_model.model.decoder.layers.11.fc1.bias
+  Shape: [4096, 1, 1, 1]
+  Type: float16
+  Elements: 4096
+
+Tensor: t11f_dnw
+  Full Name: language_model.model.decoder.layers.11.fc2.weight
+  Shape: [4096, 1024, 1, 1]
+  Type: float16
+  Elements: 4194304
+
+Tensor: t11f_dnb
+  Full Name: language_model.model.decoder.layers.11.fc2.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11f_nw
+  Full Name: language_model.model.decoder.layers.11.final_layer_norm.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t11f_nb
+  Full Name: language_model.model.decoder.layers.11.final_layer_norm.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t_lnorm_w
+  Full Name: language_model.model.decoder.layernorm_embedding.weight
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t_lnorm_b
+  Full Name: language_model.model.decoder.layernorm_embedding.bias
+  Shape: [1024, 1, 1, 1]
+  Type: float16
+  Elements: 1024
+
+Tensor: t_out_w
+  Full Name: language_model.lm_head.weight
+  Shape: [1024, 51289, 1, 1]
+  Type: float16
+  Elements: 52519936
+

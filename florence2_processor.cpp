@@ -27,13 +27,12 @@ namespace Florence2Processor {
         if (!std::filesystem::exists(image_config_path)) throw std::runtime_error("Image config file not found: " + image_config_path);
         if (!std::filesystem::exists(mapping_path)) throw std::runtime_error("Tensor mapping file not found: " + mapping_path);
 
-        // Load tensor mapping
         std::ifstream mapping_file(mapping_path);
         json tensor_mapping_json;
         mapping_file >> tensor_mapping_json;
         for (auto& [pytorch_name, gguf_name] : tensor_mapping_json.items()) {
-            tensor_mapping[pytorch_name] = gguf_name; // Full name to GGUF name
-            tensor_full_names[gguf_name] = pytorch_name; // GGUF name to full name (for reference)
+            tensor_mapping[pytorch_name] = gguf_name;
+            tensor_full_names[gguf_name] = pytorch_name;
         }
 
         cv::setNumThreads(0);
@@ -185,7 +184,7 @@ namespace Florence2Processor {
                                    ggml_tensor* conv2_weight, ggml_tensor* conv2_bias,
                                    ggml_tensor* conv3_weight, ggml_tensor* conv3_bias) {
         conv0_bias = ggml_reshape_4d(ctx, conv0_bias, 1, 1, 256, 1);
-        ggml_tensor* conv0 = ggml_conv_2d(ctx, conv0_weight, input, 4, 4, 3, 3, 1, 1); // [192, 192, 256, 1]
+        ggml_tensor* conv0 = ggml_conv_2d(ctx, conv0_weight, input, 4, 4, 3, 3, 1, 1);
         ggml_build_forward_expand(graph, conv0);
         ggml_tensor* conv0_with_bias = ggml_add(ctx, conv0, conv0_bias);
         ggml_build_forward_expand(graph, conv0_with_bias);
@@ -193,7 +192,7 @@ namespace Florence2Processor {
         ggml_build_forward_expand(graph, norm0);
 
         conv1_bias = ggml_reshape_4d(ctx, conv1_bias, 1, 1, 512, 1);
-        ggml_tensor* conv1 = ggml_conv_2d(ctx, conv1_weight, norm0, 2, 2, 1, 1, 1, 1); // [96, 96, 512, 1]
+        ggml_tensor* conv1 = ggml_conv_2d(ctx, conv1_weight, norm0, 2, 2, 1, 1, 1, 1);
         ggml_build_forward_expand(graph, conv1);
         ggml_tensor* conv1_with_bias = ggml_add(ctx, conv1, conv1_bias);
         ggml_build_forward_expand(graph, conv1_with_bias);
@@ -201,7 +200,7 @@ namespace Florence2Processor {
         ggml_build_forward_expand(graph, norm1);
 
         conv2_bias = ggml_reshape_4d(ctx, conv2_bias, 1, 1, 1024, 1);
-        ggml_tensor* conv2 = ggml_conv_2d(ctx, conv2_weight, norm1, 2, 2, 1, 1, 1, 1); // [48, 48, 1024, 1]
+        ggml_tensor* conv2 = ggml_conv_2d(ctx, conv2_weight, norm1, 2, 2, 1, 1, 1, 1);
         ggml_build_forward_expand(graph, conv2);
         ggml_tensor* conv2_with_bias = ggml_add(ctx, conv2, conv2_bias);
         ggml_build_forward_expand(graph, conv2_with_bias);
@@ -209,7 +208,7 @@ namespace Florence2Processor {
         ggml_build_forward_expand(graph, norm2);
 
         conv3_bias = ggml_reshape_4d(ctx, conv3_bias, 1, 1, 2048, 1);
-        ggml_tensor* conv3 = ggml_conv_2d(ctx, conv3_weight, norm2, 1, 1, 1, 1, 1, 1); // [48, 48, 2048, 1]
+        ggml_tensor* conv3 = ggml_conv_2d(ctx, conv3_weight, norm2, 1, 1, 1, 1, 1, 1);
         ggml_build_forward_expand(graph, conv3);
         ggml_tensor* conv3_with_bias = ggml_add(ctx, conv3, conv3_bias);
         ggml_build_forward_expand(graph, conv3_with_bias);
@@ -221,32 +220,66 @@ namespace Florence2Processor {
 
     ggml_tensor* pool_spatial(ggml_context* ctx, ggml_cgraph* graph, ggml_tensor* norm3) {
         std::cout << "norm3 shape: [" << norm3->ne[0] << ", " << norm3->ne[1] << ", " << norm3->ne[2] << ", " << norm3->ne[3] << "]\n";
-        ggml_tensor* reshaped = ggml_reshape_2d(ctx, norm3, 48 * 48, 2048); // [2304, 2048]
+        ggml_tensor* reshaped = ggml_reshape_2d(ctx, norm3, 48 * 48, 2048);
         ggml_build_forward_expand(graph, reshaped);
-        ggml_tensor* pooled = ggml_mean(ctx, reshaped); // [1, 2048]
+        ggml_tensor* pooled = ggml_mean(ctx, reshaped);
         ggml_build_forward_expand(graph, pooled);
         std::cout << "pooled shape: [" << pooled->ne[0] << ", " << pooled->ne[1] << ", " << pooled->ne[2] << ", " << pooled->ne[3] << "]\n";
         return pooled;
     }
 
     ggml_tensor* project_vision(ggml_context* ctx, ggml_cgraph* graph, ggml_tensor* pooled, ggml_tensor* vision_projection_weight) {
-        // pooled: [1, 2048]
-        std::cout << "pooled shape: [" << pooled->ne[0] << ", " << pooled->ne[1] << ", " << pooled->ne[2] << ", " << pooled->ne[3] << "]\n";
+        // Step 1: Debug input shapes
+        std::cout << "Step 1: Pooled shape: [" << pooled->ne[0] << ", " << pooled->ne[1] << ", " << pooled->ne[2] << ", " << pooled->ne[3] << "]\n";
+        std::cout << "Step 1: Vision projection weight shape: [" << vision_projection_weight->ne[0] << ", " << vision_projection_weight->ne[1] << ", " << vision_projection_weight->ne[2] << ", " << vision_projection_weight->ne[3] << "]\n";
 
-        ggml_tensor* transposed = ggml_transpose(ctx, pooled); // [2048, 1]
-        ggml_build_forward_expand(graph, transposed);
+        // Step 2: Create a new tensor for transposed weight with swapped dimensions
+        ggml_tensor* transposed_vision_projection_weight = ggml_new_tensor_2d(
+                ctx,
+                vision_projection_weight->type,
+                vision_projection_weight->ne[1], // nrows = original ncols
+                vision_projection_weight->ne[0]  // ncols = original nrows
+        );
+        // Copy transposed data
+        float* src_data = (float*)ggml_get_data(vision_projection_weight);
+        float* dst_data = (float*)ggml_get_data(transposed_vision_projection_weight);
+        for (int i = 0; i < vision_projection_weight->ne[1]; ++i) {
+            for (int j = 0; j < vision_projection_weight->ne[0]; ++j) {
+                dst_data[i * transposed_vision_projection_weight->ne[0] + j] = src_data[j * vision_projection_weight->ne[1] + i];
+            }
+        }
+        ggml_build_forward_expand(graph, transposed_vision_projection_weight);
 
-        std::cout << "vision_projection_weight shape: [" << vision_projection_weight->ne[0] << ", " << vision_projection_weight->ne[1] << ", " << vision_projection_weight->ne[2] << ", " << vision_projection_weight->ne[3] << "]\n";
-        std::cout << "transposed shape: [" << transposed->ne[0] << ", " << transposed->ne[1] << ", " << transposed->ne[2] << ", " << transposed->ne[3] << "]\n";
+        // Debug: Print transposed weight shape
+        std::cout << "Step 2: Transposed vision projection weight shape: [" << transposed_vision_projection_weight->ne[0] << ", " << transposed_vision_projection_weight->ne[1] << "]\n";
 
-        // Define multiplication in the graph without immediate execution
-        ggml_tensor* output = ggml_mul_mat(ctx, vision_projection_weight, transposed); // [1024, 2048] * [2048, 1] = [1024, 1]
+        // Step 3: Use pooled directly
+        // Debug: Print pooled shape
+        std::cout << "Step 3: Pooled shape: [" << pooled->ne[0] << ", " << pooled->ne[1] << ", " << pooled->ne[2] << ", " << pooled->ne[3] << "]\n";
+
+        // Step 4: Perform matrix multiplication
+        ggml_tensor* output = ggml_mul_mat(
+                ctx,
+                transposed_vision_projection_weight,
+                pooled
+        );
         ggml_build_forward_expand(graph, output);
 
-        std::cout << "output shape: [" << output->ne[0] << ", " << output->ne[1] << ", " << output->ne[2] << ", " << output->ne[3] << "]\n";
+        // Debug: Print output shape
+        std::cout << "Step 4: Output shape after multiplication: [" << output->ne[0] << ", " << output->ne[1] << ", " << output->ne[2] << ", " << output->ne[3] << "]\n";
 
-        ggml_tensor* corrected = ggml_reshape_2d(ctx, output, 1, 1024); // [1024, 1] -> [1, 1024]
+        // Step 5: Reshape to desired output shape
+        ggml_tensor* corrected = ggml_reshape_2d(
+                ctx,
+                output,
+                1,
+                1024
+        );
         ggml_build_forward_expand(graph, corrected);
+
+        // Debug: Print final corrected shape
+        std::cout << "Step 5: Final corrected shape: [" << corrected->ne[0] << ", " << corrected->ne[1] << ", " << corrected->ne[2] << ", " << corrected->ne[3] << "]\n";
+
         return corrected;
     }
 
@@ -261,7 +294,7 @@ namespace Florence2Processor {
                                                   load_tensor("vision_tower.convs.2.proj.bias"),
                                                   load_tensor("vision_tower.convs.3.proj.weight"),
                                                   load_tensor("vision_tower.convs.3.proj.bias"));
-        ggml_tensor* pooled = pool_spatial(ctx, graph, features); // [1, 2048]
+        ggml_tensor* pooled = pool_spatial(ctx, graph, features);
         ggml_tensor* vision_projection_weight = load_tensor("image_projection");
         return project_vision(ctx, graph, pooled, vision_projection_weight);
     }
