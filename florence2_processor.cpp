@@ -239,14 +239,8 @@ namespace Florence2Processor {
         std::cout << "vision_projection_weight shape: [" << vision_projection_weight->ne[0] << ", " << vision_projection_weight->ne[1] << ", " << vision_projection_weight->ne[2] << ", " << vision_projection_weight->ne[3] << "]\n";
         std::cout << "transposed shape: [" << transposed->ne[0] << ", " << transposed->ne[1] << ", " << transposed->ne[2] << ", " << transposed->ne[3] << "]\n";
 
-        // Reshape to explicit 2D tensors
-        ggml_tensor* weight_2d = ggml_reshape_2d(ctx, vision_projection_weight, 2048, 1024); // [1024, 2048] -> [2048, 1024]
-        ggml_build_forward_expand(graph, weight_2d);
-        ggml_tensor* input_2d = ggml_reshape_2d(ctx, transposed, 2048, 1); // [2048, 1]
-        ggml_build_forward_expand(graph, input_2d);
-
-        ggml_tensor* output = ggml_mul_mat(ctx, weight_2d, input_2d); // [2048, 1024] * [2048, 1] = [2048, 1]
-        assert(output != nullptr && "Vision output GGML matrix multiplication failed");
+        // Define multiplication in the graph without immediate execution
+        ggml_tensor* output = ggml_mul_mat(ctx, vision_projection_weight, transposed); // [1024, 2048] * [2048, 1] = [1024, 1]
         ggml_build_forward_expand(graph, output);
 
         std::cout << "output shape: [" << output->ne[0] << ", " << output->ne[1] << ", " << output->ne[2] << ", " << output->ne[3] << "]\n";
