@@ -1,5 +1,6 @@
 #include "image.hpp"
 #include "stb/stb_image.h"
+#include "stb/stb_image_resize.h"
 #include <cstdio>
 
 Image Image::open(const std::string& url) {
@@ -61,6 +62,54 @@ Image Image::open(const std::string& url) {
     return img;
 }
 
+bool Image::resize(int new_width, int new_height) {
+    // Validate input dimensions
+    if (new_width <= 0 || new_height <= 0) {
+        m_has_error = true;
+        m_error_message = "Invalid dimensions for resize operation";
+        std::fprintf(stderr, "Error: Invalid dimensions (%dx%d) for resize operation\n", 
+                    new_width, new_height);
+        return false;
+    }
+
+    // Check if image is empty or has error
+    if (m_data.empty() || m_has_error) {
+        m_has_error = true;
+        m_error_message = "Cannot resize invalid or empty image";
+        std::fprintf(stderr, "Error: Cannot resize invalid or empty image\n");
+        return false;
+    }
+
+    std::fprintf(stdout, "Resizing image from %dx%d to %dx%d\n", 
+                m_width, m_height, new_width, new_height);
+
+    // Create temporary buffer for the resized image
+    std::vector<unsigned char> resized_data(new_width * new_height * m_channels);
+    
+    // Perform the resize operation
+    int result = stbir_resize_uint8(
+        m_data.data(), m_width, m_height, 0,  // Source image
+        resized_data.data(), new_width, new_height, 0,  // Destination image
+        m_channels,  // Number of channels
+        STBIR_FLAG_ALPHA_PREMULTIPLIED  // Alpha handling
+    );
+
+    if (result == 0) {
+        m_has_error = true;
+        m_error_message = "Failed to resize image";
+        std::fprintf(stderr, "Error: Failed to resize image\n");
+        return false;
+    }
+
+    // Update image data and dimensions
+    m_data = std::move(resized_data);
+    m_width = new_width;
+    m_height = new_height;
+
+    std::fprintf(stdout, "Successfully resized image to %dx%d\n", new_width, new_height);
+    return true;
+}
+
 int Image::width() const {
     return m_width;
 }
@@ -75,4 +124,12 @@ bool Image::has_error() const {
 
 std::string Image::error_message() const {
     return m_error_message;
+}
+
+int Image::channels() const {
+    return m_channels;
+}
+
+const std::vector<unsigned char>& Image::data() const {
+    return m_data;
 }
