@@ -13,8 +13,8 @@ int main() {
     std::string prompt = "<OD>";
 
     // Download and open the image
-    std::string url = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/transformers/tasks/car.jpg?download=true";
-    Image image = Image::open(url);
+    std::string image_path = "puma.png";
+    Image image = Image::open(image_path);
 
     // Process the inputs
     auto processor_output = model_processor.process(prompt, image);
