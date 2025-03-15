@@ -5,6 +5,7 @@
 #include <vector>
 #include <utility>
 #include "image.hpp"
+#include "tokenizer.hpp"
 
 class ModelProcessor {
 public:
