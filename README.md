@@ -1,4 +1,10 @@
-# florence2.cpp
+# Florence2.cpp 🐾
+
+## Software Requirements
+- CMake 3.10 or higher
+- C++17 compatible compiler
+- Rust toolchain
+- Git
 
 ## Installation
 ```bash
@@ -6,13 +12,28 @@ git clone https://github.com/b3nNn/florence2.cpp
 cd florence2.cpp
 ```
 
-# Compilation
-```bash
+## Compilation
+
+Windows
+```powershell
 cmake -S . -B build -G "Visual Studio 16 2019"
-cmake --build build --config Release -j 8
+cmake --build build --config Release
 ```
 
-# Execution
+Mac/Linux
 ```bash
+cmake -S . -B build
+cmake --build build --config Release
+```
+
+## Execution
+
+Windows
+```powershell
 .\build\Release\florence2.exe
+```
+
+Mac/Linux
+```bash
+./build/Release/florence2
 ```
