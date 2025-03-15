@@ -10,14 +10,13 @@ set(RUST_LIB_DIR "${CMAKE_SOURCE_DIR}/hf_tokenizer")
 set(RUST_LIB_NAME "hf_tokenizer")
 
 # Include directories
-include_directories(${CMAKE_SOURCE_DIR}/include 
-                  ${RUST_LIB_DIR}
-                  ${CMAKE_SOURCE_DIR}/third_party)
+include_directories(${CMAKE_SOURCE_DIR}/include ${RUST_LIB_DIR}/include ${CMAKE_SOURCE_DIR}/third_party)
 
 # Source files
 set(SOURCES
     src/image.cpp
     src/model_processor.cpp
+    src/tokenizer.cpp
     main.cpp
 )
 

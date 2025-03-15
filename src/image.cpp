@@ -88,10 +88,9 @@ bool Image::resize(int new_width, int new_height) {
     
     // Perform the resize operation
     int result = stbir_resize_uint8(
-        m_data.data(), m_width, m_height, 0,  // Source image
-        resized_data.data(), new_width, new_height, 0,  // Destination image
-        m_channels,  // Number of channels
-        STBIR_FLAG_ALPHA_PREMULTIPLIED  // Alpha handling
+        m_data.data(), m_width, m_height, m_width * m_channels,  // Source image
+        resized_data.data(), new_width, new_height, new_width * m_channels,  // Destination image
+        m_channels  // Number of channels
     );
 
     if (result == 0) {

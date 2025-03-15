@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
 
 class Image {
 public:
