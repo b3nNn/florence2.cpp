@@ -6,29 +6,27 @@ ModelProcessor ModelProcessor::from_pretrained(const std::string& model_name, bo
     return ModelProcessor();
 }
 
-std::vector<std::vector<int>> ModelProcessor::process(const std::string& text, const Image& image, const std::string& return_tensors) {
+ProcessorOutput *ModelProcessor::process(const std::string& text, const Image& image) {
+    auto output = new ProcessorOutput();
+    // std::vector<uint32_t> input_ids = tokenizer_.encode(text, true, 256, true, true, "longest");
+
     // Logic to preprocess the text prompt and image into a format suitable for the model
     // Convert the text into input IDs and the image into pixel values
     // If return_tensors is "pt", return data in a format mimicking PyTorch tensors
     // Return a vector of vectors representing input_ids and pixel_values
-    return std::vector<std::vector<int>>();
+    return output;
 }
 
-void ModelProcessor::to(const std::string& device, const std::string& dtype) {
-    // Logic to move the model and processor data to the specified device (e.g., "cuda:0" or "cpu")
-    // and convert data to the specified data type (e.g., "float16" or "float32")
-}
-
-std::vector<int> ModelProcessor::generate(const std::vector<int>& input_ids, const std::vector<int>& pixel_values, 
+std::vector<uint32_t> ModelProcessor::generate(const std::vector<uint32_t>& input_ids, const std::vector<uint32_t>& pixel_values, 
                                           int max_new_tokens, int num_beams, bool do_sample) {
     // Logic to generate output from the model using the provided input_ids and pixel_values
     // Generate up to max_new_tokens new tokens
     // Use num_beams for beam search if do_sample is false, otherwise use sampling
     // Return a vector of generated token IDs
-    return std::vector<int>();
+    return std::vector<uint32_t>();
 }
 
-std::string ModelProcessor::batch_decode(const std::vector<int>& generated_ids, bool skip_special_tokens) {
+std::string ModelProcessor::batch_decode(const std::vector<uint32_t>& generated_ids, bool skip_special_tokens) {
     // Logic to decode the generated token IDs into human-readable text
     // If skip_special_tokens is true, remove special tokens from the output
     // Return the decoded text as a string
