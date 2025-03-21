@@ -48,5 +48,7 @@ if(WIN32)
             ws2_32 userenv bcrypt
             )
 else()
-    message(WARNING "Only WIN32 platform is tested yet.")
+    target_link_libraries(florence2 PRIVATE
+            "${RUST_LIB_DIR}/target/release/${RUST_LIB_NAME}.lib"
+            )
 endif()
