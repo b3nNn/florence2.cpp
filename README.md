@@ -13,7 +13,6 @@ cd florence2.cpp
 ```
 
 ## Compilation
-
 Windows
 ```powershell
 cmake -S . -B build -G "Visual Studio 16 2019"
@@ -33,7 +32,12 @@ Windows
 .\build\Release\florence2.exe
 ```
 
-Mac/Linux
+Mac
 ```bash
-./build/Release/florence2
+DYLD_LIBRARY_PATH=$PWD/build ./build/florence2
+```
+
+Linux
+```bash
+LD_LIBRARY_PATH=$PWD/build ./build/florence2
 ```

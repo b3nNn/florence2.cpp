@@ -39,6 +39,12 @@ endif()
 if(WIN32)
     add_custom_command(TARGET florence2 POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "${RUST_LIB_DIR}/target/release/${RUST_LIB_NAME}.dll" $<TARGET_FILE_DIR:florence2>)
+elseif(APPLE)
+    add_custom_command(TARGET florence2 POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${RUST_LIB_DIR}/target/release/lib${RUST_LIB_NAME}.dylib" $<TARGET_FILE_DIR:florence2>)
+else()
+    add_custom_command(TARGET florence2 POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${RUST_LIB_DIR}/target/release/lib${RUST_LIB_NAME}.so" $<TARGET_FILE_DIR:florence2>)
 endif()
 
 # Link libraries
@@ -47,8 +53,12 @@ if(WIN32)
             "${RUST_LIB_DIR}/target/release/${RUST_LIB_NAME}.dll.lib"
             ws2_32 userenv bcrypt
             )
+elseif(APPLE)
+    target_link_libraries(florence2 PRIVATE
+            "${RUST_LIB_DIR}/target/release/lib${RUST_LIB_NAME}.dylib"
+            )
 else()
     target_link_libraries(florence2 PRIVATE
-            "${RUST_LIB_DIR}/target/release/${RUST_LIB_NAME}.lib"
+            "${RUST_LIB_DIR}/target/release/lib${RUST_LIB_NAME}.so"
             )
 endif()
